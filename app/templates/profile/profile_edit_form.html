@@ -1,0 +1,783 @@
+{% extends skeleton['template'] %}
+{% block title %}Profile Edit Mode{% endblock %}
+{% block startscript %}
+    $(document).on({ 
+        click: function (){ 
+            var service_expand = "." + $(this).attr('id');
+            $(service_expand).toggle()
+            $(this).find('.collapse-service').toggle()
+        } 
+    }, ".service-listing");
+    
+    $(document).on({
+        focusout: function (){
+            $.ajax({
+               url: "/username_validation",
+               type: "post",
+               data: { username: $("#username").val() },
+               success: function(response) { $('.username-verification-area').show(); $('.username-verification-area').empty(); $('.username-verification-area').append(response); }
+            });
+        }
+    }, "#username");
+
+    $(document).on({
+        click: function (){
+            var form_fields = {
+                    name: $("#name").val(),
+                    username: $("#username").val(),
+                    profile_image_link: $("#profile_image_link").val(),
+                    header_image_link: $("#header_image_link").val(),
+                    description: $("#description").val(),
+                    careers: $(".career-selected").map(function(){ return $.trim($(this).text()) }).get() + '',
+                    locations: $(".location-selected").map(function(){ return $.trim($(this).text().replace(', ', '-')) }).get() + ''
+                }
+            var formData = new FormData();
+            formData.append('profile_image_upload', $("#profile_image_upload").prop('files')[0]);
+            formData.append('header_image_upload', $("#header_image_upload").prop('files')[0]);
+            for ( var key in form_fields ) { formData.append(key, form_fields[key]); }
+            $.ajax({
+                url: "/save_basic_profile",
+                type: "post",
+                contentType: false,
+                processData: false,
+                data: formData,
+             });
+            $('.save-basic-profile-message').show();
+        }
+    }, ".save-basic-profile");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/save_social_profile",
+                type: "post",
+                data: {
+                    twitter: $('#twitter').val(),
+                    instagram: $('#instagram').val(),
+                    facebook: $('#facebook').val(),
+                    pinterest: $('#pinterest').val(),
+                    youtube: $('#youtube').val(),
+                    linkedin: $('#linkedin').val(),
+                    link_titles: $(".link-title").map(function(){ return $(this).val(); }).get() + '',
+                    link_urls: $(".link-url").map(function(){ return $(this).val(); }).get() + ''
+                },
+             });
+            $('.save-social-profile-message').show();
+        }
+    }, ".save-social-profile");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/save_services_profile",
+                type: "post",
+                data: {
+                    service_titles: $(".service-title").map(function(){ return $(this).val(); }).get() + '',
+                    service_costs: $(".service-cost").map(function(){ return $(this).val(); }).get() + '',
+                    service_descriptions: $(".service-description").map(function(){ return $.trim($(this).val() + 'newdesc'); }).get() + ''
+                },
+                success: function(response) { $('#collection-companies').append(response); }
+             });
+            $(this).text('SAVED');
+        }
+    }, ".save-services-profile");
+
+    $(document).on({ click: function (){ $(this).parent().parent().parent().hide(); } }, ".close-save-profile-message");
+    
+    $(document).on({ click: function (){
+        $(this).parent().parent().parent().parent().removeClass('show'); 
+        $(this).parent().parent().parent().parent().removeClass('active'); 
+        $(this).parent().parent().parent().parent().next().addClass('show'); 
+        $(this).parent().parent().parent().parent().next().addClass('active'); 
+        $('.nav-basic').removeClass('active'); 
+        $('.nav-social').addClass('active'); 
+    } }, ".continue-to-socials-form");
+    
+    $(document).on({ click: function (){
+        $(this).parent().parent().parent().parent().removeClass('show'); 
+        $(this).parent().parent().parent().parent().removeClass('active'); 
+        $(this).parent().parent().parent().parent().next().addClass('show'); 
+        $(this).parent().parent().parent().parent().next().addClass('active'); 
+        $('.nav-social').removeClass('active'); 
+        $('.nav-services').addClass('active'); 
+    } }, ".continue-to-services-form");
+
+    $(document).on({
+        click: function (){
+            if($(".service-form-title").val().length > 0 && $(".service-form-cost").val().length > 0 && $(".service-form-description").val().length > 0) {
+                $.ajax({
+                    url: "/add_service",
+                    type: "post",
+                    data: {
+                        service_title: $(".service-form-title").val(),
+                        service_cost: $(".service-form-cost").val(),
+                        service_description: $(".service-form-description").val()
+                    },
+                    success: function(response) { $('.service-list').append(response); }
+                 });
+                $(".service-form-title").val('');
+                $(".service-form-cost").val('');
+                $(".service-form-description").val('');
+                $(".save-service-message").show();
+            } else { $(".unsuccessful-save-service-message").show(); }
+        }
+    }, ".add-service");
+
+    $(document).on({
+        click: function (){
+            $('#career-list').append("<div class='d-table career-selected hoverable' id='" + $(this).attr('id') + "' style='margin: 5px; padding-left: 10px; padding-right: 10px; height: 23px; display: inline-block; border-radius: 5px; background-color: #00A08E; border: solid 1px white; letter-spacing: 1px; color: white;'><p class='d-table-cell thick-text' style='vertical-align: middle; font-size: 14px; text-align: center; text-transform: capitalize;'>" + $(this).find('.hidden').val() + "</p></div>");
+            $("#career_name").val('');
+        }
+    }, ".add-career-to-profile");
+
+    $(document).on({ click: function (){ $(this).remove(); } }, ".career-selected");
+    $(document).on({ click: function (){ $('#career-list').empty(); } }, ".clear-selected-careers");
+
+    $(document).on({
+        click: function (){
+            if ($("#company").val().length > 0) {
+                $('#company-list').append("<div class='d-table company-selected hoverable' style='margin: 5px; padding-left: 10px; padding-right: 10px; height: 23px; display: inline-block; border-radius: 5px; background-color: #00A08E; border: solid 1px #004a41; font-size: 11px; letter-spacing: 1px; color: #004a41;'><p class='d-table-cell' style='vertical-align: middle; font-size: 11px; text-align: center; text-transform: capitalize;'>" + $("#company").val() + "</p></div>");
+                $("#company").val('');
+            }
+        }
+    }, ".add-company-to-profile");
+
+    $(document).on({ click: function (){ $('#company-list').empty(); } }, ".clear-selected-companies");
+
+    $(document).on({
+        click: function (){
+            var country = $("#country").val()
+            var city = $("#city").val()
+            if (country === '' && city.length > 0) {
+                var location = "City: " + city
+            } else if (city === '' && country.length > 0) {
+                var location = "Country: " + country
+            } else if (city.length > 0 && country.length > 0) {
+                var location = city + ", " + country
+            }
+            $('#profile-location-area').append("<div class='d-table location-selected hoverable' style='margin: 5px; padding-left: 10px; padding-right: 10px; height: 23px; display: inline-block; border-radius: 5px; background-color: #00A08E; border: solid 1px white; font-size: 11px; letter-spacing: 1px; color: white;'><p class='d-table-cell' style='vertical-align: middle; font-size: 14px; text-align: center; text-transform: capitalize;'>" + location + "</p></div>");
+            $("#country").val('');
+            $("#city").val('');
+        }
+    }, ".add-location-to-profile");
+
+    $(document).on({ click: function (){ $('#profile-location-area').empty(); } }, ".clear-selected-locations");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/remove_service",
+                type: "post",
+                data: {
+                    service_title: $.trim($(this).parent().parent().parent().find(".service-title").text()),
+                    service_cost: $.trim($(this).parent().parent().parent().parent().prev().find(".service-cost").text()),
+                    service_description: $.trim($(this).parent().parent().parent().parent().find(".service-description").text())
+                }
+             });
+            $(this).parent().parent().parent().parent().parent().remove();
+        }
+    }, ".remove-service");
+
+    $(document).on({
+        click: function (){
+            $(".service-form-title").val($(this).text());
+            $(".service-form-description").val($(this).attr('title'));
+        }
+    }, ".service-suggestion");
+{% endblock %}
+{% block style %}
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active { color: #f1f1f1; background-color: #07a08d; border-color: #07a08d; }
+.nav-tabs .nav-item.show .nav-link, .nav-tabs a { color: #00A08E; }
+.input-field { background-color: #028678; width: 100%; border-radius: 3px; border: 1px solid #004a41; color: white; padding: 7px; font-size: 14px; letter-spacing: 2px; }
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */ color: #0fbda8; opacity: 1; /* Firefox */ }
+:-ms-input-placeholder { /* Internet Explorer 10-11 */ color: #0fbda8; }
+::-ms-input-placeholder { /* Microsoft Edge */ color: #0fbda8; }
+{% endblock %}
+{% block content %}
+<div class="row no-gutters" style="display: inline-block;">
+    <div class="row no-gutters profile-edit-mode" id="profile-edit-mode-area" style="position: absolute; top: 0; height: 100%; width: 100%; z-index: 10; overflow: scroll;">
+        <div class="col-12" style="padding: 2%;">
+            <div class="row no-gutters" style="margin-bottom: 20px;">
+                <a href="/profile/fake_user" class="col d-table" style="padding: 10px; width: 100%; font-size: 13px; text-align: right; color: black; letter-spacing: 2px;">
+                    <div class="d-table-cell">
+                        Return to Profile<img src="../../static/images/arrow_right_bare.png" style="width: 20px; margin-left: 10px;">
+                    </div>
+                </a>
+            </div>
+            <div class="row no-gutters nav nav-tabs" style="width: 100%; background-color: #004a41; border-bottom: 1px solid #03695D;">
+                <a class="col nav-link thick-text nav-item nav-basic active" href="#nav-basic" data-toggle="tab" style="text-align: center; letter-spacing: 1px;">Basic</a>
+                <a class="col nav-link thick-text nav-item nav-social" href="#nav-social" data-toggle="tab" style="text-align: center; letter-spacing: 1px;">Social</a>
+                <a class="col nav-link thick-text nav-item nav-services" href="#nav-services" data-toggle="tab" style="text-align: center; letter-spacing: 1px;">Services</a>
+            </div>
+            <div class="tab-content thick-text" id="nav-tabContent">
+                <div class="row no-gutters tab-pane fade show active" id="nav-basic" role="tabpanel" aria-labelledby="nav-basic" style="position: relative; height: 10%; width: 100%; background-color: #00A08E;">
+                    <form class="col" enctype="multipart/form-data">
+                        <div class="row no-gutters" style="width: 100%; background-color: #00A08E; display: inline-block">
+                            <div class="col" style="padding: 10px;">
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col">
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding-left: 15px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Username*</p>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="padding-left: 10px; padding-right: 10px;">
+                                                <input class="input-field" type="text" id="username" value="{{skeleton['user']['profile']['username']}}" placeholder="Letters | Numbers | - | _ | +">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters username-verification-area" style="display: none;"></div>
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col">
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding-left: 15px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Name</p>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="padding-left: 10px; padding-right: 10px;">
+                                                <input class="input-field" type="text" id="name" value="{{skeleton['user']['profile']['name']}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col">
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding-left: 15px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Description</p>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="padding-left: 10px; padding-right: 10px;">
+                                                <textarea class="input-field" id="description" placeholder="Tell the citizens of Ambikor about yourself. What's your expertise? What do you love about it? Why would you make an awesome career guide?" style="height: 100px;">{{ skeleton['user']['profile']['description'] }}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col">
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding-left: 15px; padding-top: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Profile Image</p>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters" style="margin-bottom: 10px;">
+                                            <div class="col d-table" style="padding-left: 10px; padding-right: 10px;">
+                                                <input class="input-field thick-text" type="text" id="profile_image_link" placeholder="Paste a link to a pic or upload a file" {% if skeleton['user']['profile']['profile_image']['type'] == 'link' %} value="{{ skeleton['user']['profile']['profile_image']['src'] }}{% endif %}">
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="padding-left: 10px; padding-right: 10px;">
+                                                {% if skeleton['user']['profile']['profile_image']['type'] == 'upload' %}
+                                                    <input id="profile_image_upload" name="file" type="file" value="skeleton['user']['profile']['profile_image']['src']">
+                                                {% else %}
+                                                    <input id="profile_image_upload" name="file" type="file">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col">
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding-left: 15px; padding-top: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Header Image</p>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters" style="margin-bottom: 10px;">
+                                            <div class="col d-table" style="padding-left: 10px; padding-right: 10px;">
+                                                <input class="input-field" type="text" id="header_image_link" placeholder="Paste a link to a pic or upload a file" {% if skeleton['user']['profile']['header_image']['type'] == 'link' %} value="{{ skeleton['user']['profile']['header_image']['src'].split('_')[-1] }}{% endif %}">
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="padding-left: 10px; padding-right: 10px;">
+                                                {% if skeleton['user']['profile']['header_image']['type'] == 'upload' %}
+                                                    <input id="header_image_upload" name="file" type="file" value="skeleton['user']['profile']['header_image']['src']">
+                                                {% else %}
+                                                    <input id="header_image_upload" name="file" type="file">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="border-top: 2px dotted #004a41; margin-bottom: 20px;">
+                                    <div class="col">
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding: 15px; vertical-align: middle; margin-right: 10px; letter-spacing: 1px; font-size: 14px; color: #f1f1f1;">Careers & Expertise</p>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding: 15px; vertical-align: middle; margin-right: 10px; letter-spacing: 1px; font-size: 14px; color: #f1f1f1;">Start typing and select the career(s) you have expertise about. If you don't see your career, send us the career title using the feedback form. Note that adding careers will help users to find your profile.</p>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="padding-left: 10px; padding-right: 10px;">
+                                                <input class="input-field autocomplete" id="career_name"  name="career_name" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters" style="width: 100%; padding: 10px; padding-bottom: 0;">
+                                            <div class="col" style='width: 100%; font-size: 11px; letter-spacing: 1px; color: #f1f1f1; padding: 2%; background-color: #009484; border-radius: 3px;'>
+                                                <div class="row no-gutters">
+                                                    <div class="col d-table" style="padding-left: 10px; padding-right: 10px;">
+                                                        <p class='d-table-cell clear-selected-careers hoverable' style='vertical-align: middle; font-size: 11px; text-align: right;'>CLEAR ALL CAREERS</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row no-gutters" style="width: 100%;">
+                                                    <div class="col" id="career-list" style="display: flex; flex-wrap: wrap;">
+                                                        {% if skeleton['user']['profile']['careers'] |length > 0 %}
+                                                            {% for career in skeleton['user']['profile']['careers'] %}
+                                                                <div class='d-table career-selected hoverable' style='margin: 5px; padding-left: 10px; padding-right: 10px; height: 23px; display: inline-block; border-radius: 5px; background-color: #00A08E; border: solid 1px white; letter-spacing: 1px; color: white;'>
+                                                                    <p class='d-table-cell' style='vertical-align: middle; font-size: 14px; text-align: center; text-transform: capitalize;'>{{ career }}</p>
+                                                                </div>
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="border-top: 2px dotted #004a41; margin-bottom: 20px;">
+                                    <div class="col">
+                                        <div class="row no-gutters" style="width: 100%;">
+                                            <div class="col d-table" style="width: 100%;">
+                                                <p class="d-table-cell" style="padding: 15px; padding-bottom: 0; vertical-align: middle; margin-right: 10px; letter-spacing: 1px; font-size: 14px; color: #f1f1f1;">Enter the locations where you spend the most time.</p>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters" style="margin-bottom: 10px;">
+                                            <div class="col d-table" style="width: 100%; padding: 10px; padding-bottom: 0;">
+                                                <div class="row no-gutters">
+                                                    <div class="col d-table" style="height: 100%;">
+                                                        <p class="d-table-cell" style="padding-left: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">City</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row no-gutters">
+                                                    <div class="col d-table" style="width: 100%;">
+                                                        <input class="input-field" type="text" id="city" style="text-transform: capitalize;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col d-table" style="width: 100%; padding: 10px; padding-bottom: 0;">
+                                                <div class="row no-gutters">
+                                                    <div class="col d-table" style="height: 100%;">
+                                                        <p class="d-table-cell" style="padding-left: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Country</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row no-gutters">
+                                                    <div class="col d-table" style="width: 100%;">
+                                                        <input class="input-field" type="text" id="country" style="text-transform: capitalize;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters" style="padding: 10px; padding-top: 0; padding-bottom: 0;">
+                                             <div class="col" style="background-color: #03695D; padding: 10px; border-radius: 5px;">
+                                                <div class="d-table add-location-to-profile hoverable" style="width: 100%; height: 100%; font-size: 14px; text-align: center; letter-spacing: 2px;">
+                                                    <p class="d-table-cell" style="color: white; vertical-align: middle;">Add Location</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters" style="width: 100%; padding: 10px; padding-bottom: 0;">
+                                            <div class="col" style='width: 100%; font-size: 11px; letter-spacing: 1px; color: #f1f1f1; padding: 2%; background-color: #009484; border-radius: 3px;'>
+                                                <div class="row no-gutters">
+                                                    <div class="col d-table clear-selected-locations hoverable" style='width: 100%; font-size: 11px; letter-spacing: 1px; color: #f1f1f1;'>
+                                                        <p class='d-table-cell' style='vertical-align: middle; font-size: 11px; text-align: right;'>CLEAR ALL LOCATIONS</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row no-gutters" style="width: 100%;">
+                                                     <div class="col" id="profile-location-area" style="display: flex; flex-wrap: wrap;">
+                                                        {% if skeleton['user']['profile']['locations'] |length > 0 %}
+                                                            {% for location in skeleton['user']['profile']['locations'] %}
+                                                                <div class='d-table location-selected hoverable' style='margin: 5px; padding-left: 10px; padding-right: 10px; height: 23px; display: inline-block; border-radius: 5px; background-color: #00A08E; border: solid 1px white; font-size: 11px; letter-spacing: 1px; color: white;'>
+                                                                    <p class='d-table-cell' style='vertical-align: middle; font-size: 14px; text-align: center; text-transform: capitalize;'>{{ location|replace('-', ', ') }}</p>
+                                                                </div>
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters" style="height: 50px; width: 100%; background-color: #00A08E;">
+                            <div class="col" style="background-color: #767171;">
+                                <div class="d-table" style="width: 100%; height: 100%; font-size: 16px; text-align: center; letter-spacing: 2px;">
+                                    <a href="/profile/fake_user" class="d-table-cell" style="color: white; vertical-align: middle;">CANCEL</a>
+                                </div>
+                            </div>
+                            <div class="col" style="background-color: #03695D;">
+                                <div class="d-table" style="width: 100%; height: 100%; font-size: 16px; text-align: center; letter-spacing: 2px;">
+                                    <a href="#" class="d-table-cell" style="color: white; vertical-align: middle;">SUBMIT</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="row no-gutters tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-social" style="height: 10%; width: 100%; background-color: #00A08E;">
+                    <div class="col">
+                        <div class="row no-gutters" style="padding: 20px; padding-bottom: 0;">
+                            <div class="col">
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col">
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding-top: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Social Media</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col-1" style="height: min-100%; padding-bottom: 2%;">
+                                        <img src="../../static/images/twitter.png" style="position: relative; width: 30px;">
+                                    </div>
+                                    <div class="col d-table" style="width: 100%;">
+                                        <input type="text" class="input-field" id="twitter" placeholder="http://www.twitter.com/username" value="{{skeleton['user']['profile']['social_media']['twitter']}}">
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col-1" style="height: min-100%; padding-bottom: 2%;">
+                                        <img src="../../static/images/instagram.png" style="position: relative; width: 30px;">
+                                    </div>
+                                    <div class="col d-table" style="width: 100%;">
+                                        <input type="text" class="input-field" id="instagram" placeholder="http://www.instagram.com/username" value="{{skeleton['user']['profile']['social_media']['instagram']}}">
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col-1" style="height: min-100%; padding-bottom: 2%;">
+                                        <img src="../../static/images/facebook.png" style="position: relative; width: 30px;">
+                                    </div>
+                                    <div class="col d-table" style="width: 100%;">
+                                        <input type="text" class="input-field" id="facebook" placeholder="http://www.facebook.com/username" value="{{skeleton['user']['profile']['social_media']['facebook']}}">
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col-1" style="height: min-100%; padding-bottom: 2%;">
+                                        <img src="../../static/images/pinterest.png" style="position: relative; width: 30px;">
+                                    </div>
+                                    <div class="col d-table" style="width: 100%;">
+                                        <input type="text" class="input-field" id="pinterest" placeholder="http://www.pinterest.com/username" value="{{skeleton['user']['profile']['social_media']['pinterest']}}">
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col-1" style="height: min-100%; padding-bottom: 2%;">
+                                        <img src="../../static/images/youtube.png" style="position: relative; width: 30px;">
+                                    </div>
+                                    <div class="col d-table" style="width: 100%;">
+                                        <input type="text" class="input-field" id="youtube" placeholder="http://www.youtube.com/username" value="{{skeleton['user']['profile']['social_media']['youtube']}}">
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-bottom: 20px;">
+                                    <div class="col-1" style="height: min-100%; padding-bottom: 2%;">
+                                        <img src="../../static/images/linkedin.png" style="position: relative; width: 30px;">
+                                    </div>
+                                    <div class="col d-table" style="width: 100%;">
+                                        <input type="text" class="input-field" id="linkedin" placeholder="http://www.linkedin.com/username" value="{{skeleton['user']['profile']['social_media']['linkedin']}}">
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-bottom: 20px; border-top: 2px dotted #004a41;">
+                                    <div class="col">
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding-top: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Other Links</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters">
+                                    <div class="col d-table" style="height: 100%;">
+                                        <p class="d-table-cell" style="padding-left: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Title</p>
+                                    </div>
+                                    <div class="col-1"></div>
+                                    <div class="col d-table" style="height: 100%;">
+                                        <p class="d-table-cell" style="padding-left: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Link</p>
+                                    </div>
+                                    <div class="col-2"></div>
+                                </div>
+                                <div class="row no-gutters controls" style="margin-bottom: 20px;"> 
+                                     <div class="col form" style="width: 100%;">
+                                         {% if skeleton['user']['profile']['links'] |length > 0 %}
+                                            {% for link in skeleton['user']['profile']['links'] %}
+                                                 <div class="row no-gutters entry input-group col-xs-3" style="margin-bottom: 10px;">
+                                                     <input class="col input-field link-title" type="text" placeholder="Blog, Website, Porfolio..." value="{{ link[0] }}" style="padding-left: 7px;">
+                                                     <div class="col-1"></div>
+                                                     <input class="col input-field link-url" type="text" value="{{ link[1] }}" style="padding-left: 7px;">
+                                                     <div class="col-1"></div>
+                                                     <span class="col-1 input-group-btn">
+                                                         <button class="btn btn-danger btn-remove" type="button" style="height: 100%; width: 100%;">
+                                                             <span class="glyphicon glyphicon-minus"></span>
+                                                         </button>
+                                                     </span>
+                                                 </div>
+                                            {% endfor %}
+                                         {% endif %}
+                                         <div class="row no-gutters entry input-group col-xs-3" style="margin-bottom: 10px;">
+                                             <input class="col input-field link-title" type="text" placeholder="Blog, Website, Porfolio..." style="padding-left: 7px;">
+                                             <div class="col-1"></div>
+                                             <input class="col input-field link-url" type="text" style="padding-left: 7px;">
+                                             <div class="col-1"></div>
+                                             <span class="col-1 input-group-btn">
+                                                 <button class="btn btn-success btn-add" type="button" style="height: 100%; width: 100%;">
+                                                     <span class="glyphicon glyphicon-plus"></span>
+                                                 </button>
+                                             </span>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                        <div class="row no-gutters" style="height: 50px; width: 100%; background-color: #00A08E;">
+                            <div class="col" style="background-color: #767171;">
+                                <div class="d-table" style="width: 100%; height: 100%; font-size: 16px; text-align: center; letter-spacing: 2px;">
+                                    <a href="/profile/fake_user" class="d-table-cell" style="color: white; vertical-align: middle;">CANCEL</a>
+                                </div>
+                            </div>
+                            <div class="col" style="background-color: #03695D;">
+                                <div class="d-table" style="width: 100%; height: 100%; font-size: 16px; text-align: center; letter-spacing: 2px;">
+                                    <a href="#" class="d-table-cell" style="color: white; vertical-align: middle;">SUBMIT</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row save-social-profile-message" style="position: absolute; bottom: 10%; width: 80%; left: 50%; transform: translate(-50%, 0); background-color: #014a40; border: 5px solid #cdcdcd; border-radius: 5px; text-align: center; padding: 10px; box-shadow: 5px 5px 15px black; display: none;">
+                        <div class="col">
+                            <div style="width: 100%; text-align: right;"><img src="../../static/images/close_icon.png" class="hoverable close-save-profile-message" style="width: 20px;"></div>
+                            <img src="../../static/images/grey_check_icon.png" style="width: 70px;">
+                            <div class="d-table thick text" style="width: 100%; font-size: 20px; letter-spacing: 1px; padding: 30px;">
+                                <p class="d-table-cell" style="vertical-align: middle; color: white;">Saved</p>
+                            </div>
+                            <div class="d-table thick text" style="width: 100%; font-size: 20px; letter-spacing: 1px; padding: 30px;">
+                                <p class="d-table-cell close-save-profile-message continue-to-services-form hoverable" style="height: 30px; font-size: 14px; text-align: center; background-color: #00A08E; border-radius: 50px; color: white; letter-spacing: 2px; vertical-align: middle; text-transform: uppercase;">Continue to Services Form</p>
+                            </div>                    
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-gutters tab-pane fade" id="nav-services" role="tabpanel" aria-labelledby="nav-professional" style="height: 10%; width: 100%; background-color: #00A08E;">
+                    <div class="col">
+                            <div class="row no-gutters" style="width: 100%; background-color: #00A08E; padding-top: 20px;">
+                                <div class="col">
+                                    <div class="d-table" style="width: 100%; height: 100%; {% if skeleton['user']['stripe']['stripe_connect'] is defined %}font-size: 18px;{% else %}font-size: 12px;{% endif %} letter-spacing: 1px; padding-left: 3%;">
+                                        <p class="d-table-cell" style="vertical-align: middle; color: #f1f1f1;">Add a New Service</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row no-gutters service-controls"> 
+                                 <div class="col form" style="width: 100%; padding: 10px; padding-top: 10px;">
+                                     <div class="row no-gutters service-form input-group col-xs-3" style="margin-bottom: 15px;"> 
+                                        <div class="col">
+                                            <div class="row no-gutters">
+                                                <div class="col d-table" style="height: 100%;">
+                                                    <p class="d-table-cell" style="padding-left: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Service</p>
+                                                </div>
+                                                <div class="col-2"></div>
+                                                <div class="col-3 d-table" style="height: 100%;">
+                                                    <p class="d-table-cell" style="padding-left: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Cost (min. $1)</p>
+                                                </div>
+                                            </div>
+                                             <div class="row no-gutters" style="margin-bottom: 10px;">
+                                                 <input class="col input-field service-form-title" type="text" placeholder="Service Title" style="padding-left: 7px;">
+                                                 <div class="col-1"></div>
+                                                 <div class="col-1" style="text-align: right; padding-right: 10px; font-size: 20px; color: white;">$</div>
+                                                 <div class="col-3">
+                                                     <input class="input-field service-form-cost" type="number" placeholder="20.00" style="padding-left: 7px;">
+                                                 </div>
+                                             </div>
+                                            <div class="row no-gutters">
+                                                <div class="col d-table" style="height: 100%;">
+                                                    <p class="d-table-cell" style="padding-left: 7px; padding-top: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; color: #f1f1f1;">Service Description</p>
+                                                </div>
+                                            </div>
+                                             <div class="row no-gutters" style="margin-bottom: 10px;">
+                                                 <textarea class="col input-field form-control service-form-description" type="text" style="padding-left: 7px;"></textarea>
+                                             </div>
+                                            <div class="row no-gutters" style="margin-bottom: 10px;">
+                                                 <div class="col" style="background-color: #03695D; padding: 10px; border-radius: 5px;">
+                                                    <div class="d-table" style="width: 100%; height: 100%; font-size: 14px; text-align: center; letter-spacing: 2px;">
+                                                        <a href="#" class="d-table-cell add-service" style="color: white; vertical-align: middle;">Add Service</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                     </div>
+                                 </div>
+                             </div>
+                            <div class="row no-gutters" style="width: 100%; background-color: #00A08E; padding-top: 20px;">
+                                <div class="col">
+                                    <div class="d-table" style="width: 100%; height: 100%; font-size: 12px; letter-spacing: 1px; padding-left: 3%;">
+                                        <p class="d-table-cell" style="vertical-align: middle; color: #f1f1f1;">Select a service suggestion to fill in a template</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row no-gutters" style="width: 100%; background-color: #00A08E; padding-bottom: 10px; ">
+                                <div class="col" style="padding: 10px; display: flex; flex-wrap: wrap;">
+                                    {% set service_suggestions = [ 
+                                    {'title': 'Advice', 'description': 'Consider offering advice to hopeful professionals trying to break into your industry.'}, 
+                                    {'title': 'Apprenticeship', 'description': 'Consider allowing a newbie in your industry to work along side you to learn the ropes. You can even offer multiple apprenticeship services at different costs for varying lengths of time.'}, 
+                                    {'title': 'Conversation', 'description': 'You have probably gained so much knowledge that many people would find valuable. Why not earn some money by having a simple conversation.'}, 
+                                    {'title': 'Critique', 'description': "Do you have a good eye for detail? Did you know that you could earn money by offering to critique and give advice about other people's work?"}, 
+                                    {'title': 'FAQ Email', 'description': 'Up for something more low key? How about charging for a quick Q&A?'}, 
+                                    {'title': 'Interview (In-Person)', 'description': 'Feeling social? Why not charge for your time and allow someone to conduct a quick interview with you?'}, 
+                                    {'title': 'Interview (Live Online)', 'description': 'Feeling social, but not in the mood for an outing? Why not charge for your time and allow someone to conduct a quick online interview with you?'}, 
+                                    {'title': 'Internship', 'description': 'Consider allowing a hopeful professional in your industry to work along side you to learn the ropes. You can even offer multiple apprenticeship services at different costs for varying lengths of time.'}, 
+                                    {'title': 'Lesson (In-Person)', 'description': "Why not play teacher for a bit and bestow some of the knowledge you've gained on some professionals curious about your career?"}, 
+                                    {'title': 'Lesson (Live Online)', 'description': "Wanna play teacher but don't wanna leave the house? Try bestowing some of the knowledge you've gained on some professionals curious about your career through a video chat?"}, 
+                                    {'title': 'Mentorship', 'description': 'There are probably tons of people who would find great value in the advice you have to offer. Why not earn some money through mentorship by pointing worthy career hopefuls in the right direction.'}, 
+                                    {'title': 'Portfolio Review', 'description': 'Use your critical eye to help a career hopeful prepare their portfolio.'}, 
+                                    {'title': 'Reaction Video', 'description': 'Reaction videos are all the rage on YouTube. Why not capitalize off of your expertise and have people send in their portfolios and creations and film your reaction to them for a price?'}, 
+                                    {'title': 'Redesign', 'description': 'Logo redesigns are becoming a popular trend on YouTube. Why not offer the insights of your artistic mind for a price and allow people to send in their creations in order to have you put your own spin on things?'}, 
+                                    {'title': 'Shadow Shift', 'description': 'Take your kids to work day, co-op and shadow shifts are just a few strategies that allow career hopefuls to experiment with a career before making a commitment. Perhapse, consider allowing someone to shadow you for a bit.'}, 
+                                    {'title': 'Suggestions', 'description': 'There are many people who are eager to hear insider suggestions about their plans on pursuing a career path.'}, 
+                                    {'title': 'Tips', 'description': 'There are many people who are trying to figure out if your career is the career for them. Why not offer some useful insights into how they might be able to come to a more solid conclusion.'}, 
+                                    {'title': 'Tutorial (In-Person)', 'description': 'There are tons of people just starting out in their careers who would love to hear how you do what you do. So why not get out there are share your wealth of knowledge!'}, 
+                                    {'title': 'Tutorial (Online)', 'description': 'There are tons of people just starting out in their careers who would love to hear how you do what you do. So why not share your wealth of knowledge from the comfort of your own home!'}, 
+                                    {'title': 'Video Chat', 'description': 'You have probably gained so much knowledge that many people would find valuable. Why not earn some money by having a simple video chat with someone looking to learn more about your career and industry.'}, 
+                                    {'title': "User's Choice", 'description': "Some users might have a specific service in mind that you haven't considered, so how about letting them hit you up with an offer?"}
+                                    ] %}
+                                    {% for service in service_suggestions %}
+                                        <div class="d-table hoverable" id="" style="margin: 5px; padding-left: 10px; padding-right: 10px; height: 23px; display: inline-block; border-radius: 5px; background-color: #00A08E; border: dashed 1px #004a41; font-size: 11px; letter-spacing: 1px; color: #f1f1f1;">
+                                            <p class="d-table-cell service-suggestion" title="{{ service['description'] }}" style="vertical-align: middle; font-size: 11px; text-align: center;">{{ service['title'] }}</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="row no-gutters" style="width: 100%; background-color: #00A08E; padding-top: 20px;">
+                                <div class="col">
+                                    <div class="d-table" style="width: 100%; height: 100%; font-size: 12px; letter-spacing: 1px; padding-left: 3%;">
+                                        <p class="d-table-cell" style="vertical-align: middle; color: #f1f1f1;">Your Current Services</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row no-gutters service-controls" style="margin-bottom: 20px;"> 
+                                 <div class="col service-list" style="width: 100%; padding: 10px; padding-top: 10px;">
+                                     {% if skeleton['user']['profile']['services'] |length > 0 %}
+                                        {% for service in skeleton['user']['profile']['services'] %}
+                                             <div class="row no-gutters service" style="width: 100%; background-color: #00A08E; padding: 5px; border-radius: 5px; background-color: #00A08E; border: solid 1px #f1f1f1; margin-bottom: 10px;">
+                                                <div class="col-2">
+                                                    <div class="d-table" style="width: 100%; height: 100%; font-size: 16px; letter-spacing: 1px;">
+                                                        <p class="d-table-cell service-cost" style="vertical-align: middle; color: #f1f1f1;">${{ service['cost'] }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="row no-gutters" style="width: 100%; margin-bottom: 10px;">
+                                                        <div class="col">
+                                                            <div class="d-table" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 1px;">
+                                                                <b class="d-table-cell service-title" style="vertical-align: middle; color: #f1f1f1;">{{ service['title'] }}</b>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <div class="d-table" style="width: 100%; height: 100%; font-size: 11px; letter-spacing: 1px;">
+                                                                <p class="d-table-cell remove-service hoverable" style="vertical-align: middle; text-align: right; color: #f1f1f1;">Remove</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row no-gutters" style="width: 100%;">
+                                                        <div class="col">
+                                                            <div class="d-table" style="width: 100%; height: 100%; font-size: 12px; letter-spacing: 1px;">
+                                                                <p class="d-table-cell service-description" style="vertical-align: middle; color: #f1f1f1;">{{ service['description'] }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                     {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row save-service-message" style="position: absolute; bottom: 10%; width: 80%; left: 50%; transform: translate(-50%, 0); background-color: #014a40; border: 5px solid #cdcdcd; border-radius: 5px; text-align: center; padding: 10px; box-shadow: 5px 5px 15px black; display: none;">
+                        <div class="col">
+                            <div style="width: 100%; text-align: right;"><img src="../../static/images/close_icon.png" class="hoverable close-save-profile-message" style="width: 20px;"></div>
+                            <img src="../../static/images/grey_check_icon.png" style="width: 70px;">
+                            <div class="d-table thick text" style="width: 100%; font-size: 20px; letter-spacing: 1px; padding: 30px;">
+                                <p class="d-table-cell" style="vertical-align: middle; color: white;">Saved</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row unsuccessful-save-service-message" style="position: absolute; bottom: 10%; width: 80%; left: 50%; transform: translate(-50%, 0); background-color: #014a40; border: 5px solid #cdcdcd; border-radius: 5px; text-align: center; padding: 10px; box-shadow: 5px 5px 15px black; display: none;">
+                        <div class="col">
+                            <div style="width: 100%; text-align: right;"><img src="../../static/images/close_icon.png" class="hoverable close-save-profile-message" style="width: 20px;"></div>
+                            <img src="../../static/images/grey_x_icon.png" style="width: 70px;">
+                            <div class="d-table thick text" style="width: 100%; font-size: 20px; letter-spacing: 1px; padding: 30px;">
+                                <p class="d-table-cell" style="vertical-align: middle; color: white;">Make sure to fill in all fields</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function autocomplete(inp, arr) {
+      var currentFocus;
+      inp.addEventListener("input", function(e) {
+          var a, b, i, val = this.value;
+          closeAllLists();
+          if (!val) { return false; }
+          currentFocus = -1;
+          a = document.createElement("DIV");
+          a.setAttribute("id", this.id + "autocomplete-list");
+          a.setAttribute("class", "autocomplete-items");
+          a.setAttribute("style", "overflow-y: scroll; height: 50vh; padding: 10px; padding-top: 0;");
+          this.parentNode.appendChild(a);
+          for (i = 0; i < arr.length; i++) {
+            if (arr[i]["name"].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                  var careerSelction = arr[i]
+                  b = document.createElement("DIV");
+                  b.setAttribute("class", arr[i]["id"] + " add-career-to-profile thin-text");
+                  b.setAttribute("id", arr[i]["id"]);
+                  b.setAttribute("style", "display: inline-block; width: 100%; text-transform: capitalize; position: relative; height: 50px;");
+                  b.innerHTML = "<strong>" + arr[i]["name"].substr(0, val.length) + "</strong>";
+                  b.innerHTML += arr[i]["name"].substr(val.length);
+                  b.innerHTML += "<img src='/static/images/more_icon.png' style='height: 30px; position: absolute; right: 10px;'>";
+                  b.innerHTML += "<input class='hidden' type='hidden' value='" + arr[i]["name"] + "' class='" + arr[i]["id"] + "'>";
+                  b.addEventListener("click", function(e) {
+                      inp.value = this.getElementsByTagName("input")[0].value;
+                      closeAllLists();
+                  });
+              a.appendChild(b);
+            }
+          }
+      });
+      function closeAllLists(elmnt) {
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) { if (elmnt != x[i] && elmnt != inp) { x[i].parentNode.removeChild(x[i]); } }
+      }
+      document.addEventListener("click", function (e) { closeAllLists(e.target); });
+    }
+    var career_names = {{ skeleton['full_career_list'] | tojson | safe }}
+    autocomplete(document.getElementsByName("career_name")[0], career_names);
+</script>
+
+<script type="text/javascript">
+    $(function()
+    {
+        $(document).on('click', '.btn-add', function(e)
+        { 
+            e.preventDefault();
+
+            var controlForm = $('.controls .form:first');
+            var currentEntry = $(this).parents('.entry:first');
+            var newEntry = $(currentEntry.clone()).appendTo(controlForm);
+
+            newEntry.find('input').val('');
+            controlForm.find('.entry:not(:last) .btn-add')
+                .removeClass('btn-add').addClass('btn-remove')
+                .removeClass('btn-success').addClass('btn-danger')
+                .html('<span class="glyphicon glyphicon-minus"></span>');
+        }).on('click', '.btn-remove', function(e)
+        {
+            $(this).parents('.entry:first').remove();
+
+            e.preventDefault();
+            return false;
+        });
+    });
+</script>
+{% endblock %}

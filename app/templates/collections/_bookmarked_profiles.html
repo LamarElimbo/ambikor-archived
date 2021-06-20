@@ -1,0 +1,37 @@
+<div class="row no-gutters" style="margin-top: 20px; padding: 5px;">
+    <div class="col-12" style="text-align: center; background-color: #f1f1f1; padding-right: 10px; padding-left: 10px;">
+        <p style="font-size: 14px; letter-spacing: 10px; text-transform: uppercase; padding-right: 10px; padding-left: 10px;">Profiles</p>
+    </div>
+</div>
+{% if skeleton['user']['bookmarks']['profiles']|length == 0 %}
+    <div class="row no-gutters" style="width: 100%; margin-top: 25px; padding-bottom: 20px;">
+        <div class="col-12 d-table" style="text-decoration: none; text-align: center; letter-spacing: 2px;">
+            <p class="d-table-cell">It looks like you haven't bookmarked any profiles yet.</p>
+        </div>
+    </div>
+{% endif %}
+<div class="row no-gutters" style="padding-left: 3%; padding-right: 3%;">
+    {% for bookmark in profiles %}
+        <a href="{{ url_for('profile.user_profile', username=skeleton['user']['profile']['username']) }}" class="col-12 col-md-6" style="text-decoration: none; text-transform: capitalize; padding: 10px;">
+            <div class="row no-gutters" style="padding: 2%; background-color: #272727; border: solid 1px #00A08E; border-radius: 3px;">
+                <div class="col">
+                    <img src="{{ skeleton['user']['profile']['profile_image']['src'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 150px; height: 150px; object-fit: cover; position: relative; border-radius: 50%; border: solid 5px #f1f1f1;">
+                </div>
+                <div class="col thick-text" style="font-size: 10px; letter-spacing: 2px;">
+                    {% if skeleton['user_type'] == 'user' %}
+                        <div class="row no-gutters">
+                            <div class="col" style="text-align: right; padding: 10px;">
+                                <img src='/static/images/star_icon.png' class="stop-prop bookmark-add hoverable" id="profile-{{skeleton['user']['user_id']}}" style="height: 17px; {%if skeleton['user']['user_id'] in skeleton['user']['bookmarks']['profiles']%}display: none;{%endif%}" onclick="event.preventDefault()">
+                                <img src='/static/images/star_pink_icon.png' class="stop-prop bookmark-remove hoverable" id="profile-{{skeleton['user']['user_id']}}" style="height: 17px; {%if not skeleton['user']['user_id'] in skeleton['user']['bookmarks']['profiles']%}display: none;{%endif%}" onclick="event.preventDefault()">
+                            </div>
+                        </div>
+                    {% endif %}
+                    <p style="font-size: 14px;">{{ skeleton['user']['profile']['name'] }}</p>
+                    {% for career in skeleton['user']['profile']['careers'] %}
+                        <p>#{{ career }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </a>
+    {% endfor %}
+</div>

@@ -1,0 +1,46 @@
+<div class="row no-gutters" style="width: 100%; padding: 10px;">
+    <div class="col" style="height: 100%; width: 100%; color: white; text-align: center;">
+        <div class="row no-gutters" style="margin-top: 20px;">
+            <div class="col">
+                <div class="d-table" style="width: 100%; height: 100%; text-align: center; font-size: 24px; letter-spacing: 1px; padding-bottom: 10px;">
+                    <p class="d-table-cell selected-service-title" style="vertical-align: middle; color: white;">{{ messages['service']['title'] }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col">
+                <div class="d-table" style="width: 100%; height: 100%; text-align: center; font-size: 18px; letter-spacing: 1px;">
+                    <p class="d-table-cell selected-service-cost" style="vertical-align: middle; color: white;">${{ messages['service']['cost'] }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col">
+                <div class="d-table" style="width: 100%; height: 100%; text-align: center; font-size: 14px; letter-spacing: 1px; padding: 20px;">
+                    <p class="d-table-cell selected-service-description" style="vertical-align: middle; color: white;">{{ messages['service']['description'] }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row no-gutters" style="width: 100%; padding: 10px;">
+    <div class="col-12 col-md service-request-form service-request-response-form" style="padding: 2%;">
+        <div class="row no-gutters" style="padding-top: 10px; padding-bottom: 10px; background: #f1f1f1; border-radius: .4em;">
+            <div class="col">
+                <form action="{{ url_for('auth.service_payment', service=messages['message_id']) }}" method="POST" style="width: 100%; text-align: center;">
+                    <script
+                        src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                        data-key="pk_live_MxI16GOKDFFf6qqs0yqYucf4"
+                        data-amount="{{messages['service']['cost']|int|abs * 100}}"
+                        data-name="Ambikor"
+                        data-description="{{ messages['service']['title'] }}"
+                        data-image="../../../static/images/logo.png"
+                        data-locale="auto"
+                        data-currency="cad"
+                        data-zip-code="true">
+                    </script>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

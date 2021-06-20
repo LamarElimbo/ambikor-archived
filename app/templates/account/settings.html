@@ -1,0 +1,286 @@
+{% extends skeleton['template'] %}
+{% block title %}Ambikor - Settings{% endblock %}
+{% block startscript %}
+    //////////////// DELETE ACCOUNT ////////////////
+    $(document).on({ click: function (){ $(".confirm-account-deletion-form").show(); } }, ".account-deletion");
+    $(document).on({ click: function (){ $(".confirm-account-deletion-form").hide(); } }, "#cancel-account-deletion");
+{% endblock %}
+{% block content %}
+<div style="height: 100%; overflow: scroll">
+    <div class="row no-gutters" style="height:100%; margin-top: 25px;">
+        <div class="col" style="padding: 2%;">
+            <div class="row no-gutters">
+                <div class="col-12 col-md-4">
+                    <ul class="nav nav-pills" role="tablist" style="width: 100%; top: 5%; background-color: #e6e6e6; padding-left: 7%; font-size: 12px; letter-spacing: 2px;">
+                        <li class="d-table nav-item" style="width: 100%; height: 40px;">
+                            <a class="d-table-cell active" href="#account-pill" data-toggle="pill" style="color: black; vertical-align: middle;">ACCOUNT</a>
+                        </li>
+                        <li class="d-table nav-item" style="width: 100%; height: 40px;">
+                            <a class="d-table-cell" href="#password-pill" data-toggle="pill" style="color: black; vertical-align: middle;">PASSWORD</a>
+                        </li>
+                        <li class="d-table nav-item" style="width: 100%; height: 40px;">
+                            <a class="d-table-cell" href="{{ url_for('profile.user_profile_edit')}}" style="color: black; vertical-align: middle;">EDIT PROFILE</a>
+                        </li>
+                        <li class="d-table nav-item" style="width: 100%; height: 40px;">
+                            <a class="d-table-cell" href="#delete-pill" data-toggle="pill" style="color: black; vertical-align: middle;">DELETE ACCOUNT</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-1" style="height: 55px;"></div>
+                <div class="col-12 col-md-7">
+                    <div class="row no-gutters" style="height: 100%;">
+                        <div class="col tab-content" style="background-color: #e6e6e6;">
+                            <div class="row no-gutters tab-pane active" id="account-pill" style="width: 100%;">
+                                <div class="col-12" style="width: 100%; font-size: 12px; letter-spacing: 1px;">
+                                    <div class="row no-gutters" style="height: 55px; border-bottom: solid 1px #1C1B1B;">
+                                        <div class="col" style="padding-left: 15px;">
+                                            <div class="d-table" style="width: 100%; height: 100%;">
+                                                <p class="d-table-cell" style="vertical-align: middle; font-size: 18px;">Account</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px;"></div>
+                                    <div class="row no-gutters" style="height: 55px;">
+                                        <div class="col-3" style="padding-left: 15px;">
+                                            <div class="d-table" style="width: 100%; height: 100%; text-align: right;">
+                                                <p class="d-table-cell" style="vertical-align: middle; font-size: 12px;">Name</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-1" style="height: 55px;"></div>
+                                        <div class="col" style="height: 55px;">
+                                            <form action="#" method='get'>
+                                                <input type="text" id='username' name='username' class="d-table" value="{{skeleton['user']['profile']['name']}}" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"  style="position: absolute; top: 15%; width: 100%; height: 36px; border: solid 1px #1C1B1B; border-radius: 3px; background-color: #767171; font-family: 'Raleway', sans-serif; font-size: 13px; color: white; padding-left: 5%;">
+                                            </form>
+                                        </div>
+                                        <div class="col-1" style="height: 55px"></div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px;">
+                                        <div class="col-3" style="padding-left: 15px;">
+                                            <div class="d-table" style="width: 100%; height: 100%; text-align: right;">
+                                                <p class="d-table-cell" style="vertical-align: middle; font-size: 12px;">Email</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-1"></div>
+                                        <div class="col">
+                                            <form action="#" method='get'>
+                                                <input type="text" id='email' name='email' class="d-table" value="{{skeleton['user']['email']}}" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"  style="position: absolute; top: 15%; width: 100%; height: 36px; border: solid 1px #1C1B1B; border-radius: 3px; background-color: #767171; font-family: 'Raleway', sans-serif; font-size: 13px; color: white; padding-left: 5%;">
+                                            </form>
+                                        </div>
+                                        <div class="col-1"></div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px;">
+                                        <div class="col-3"></div>
+                                        <div class="col-1"></div>
+                                        <div class="col">
+                                            <div class="d-table" style="width: 100%; height: 55px; padding-left: 5px;">
+                                                <p class="d-table-cell" style="font-size: 12px; color: #767171;">Email will not be publicly displayed.</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-1"></div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px;"></div>
+                                    <div class="row no-gutters" style="height: 55px; border-top: solid 1px #1C1B1B;">
+                                        <div class="col" style="padding-left: 15px;">
+                                            <div class="d-table" style="width: 100%; height: 55px;">
+                                                <a href="#" class="d-table-cell" id="account-change-verification" style="text-align: center; vertical-align: middle; font-size: 18px; color: black;">Save Changes</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters new-job-form" style="position: absolute; top: 2%; left: 2%; height: 96%; width: 96%; background-color: #f1f1f1; z-index: 100000; opacity: 0.9; display: none;"></div>
+                                    <form action="" autocomplete="off" class="row no-gutters new-job-form" style="position: absolute; top: 2%; left: 2%; height: 96%; width: 96%; z-index: 1000000; display: none;">
+                                        <div class="col"></div>
+                                        <div class="col-10" style="padding: 2%;">
+                                            <div class="row no-gutters" style="height: 55px; width: 100%; background-color: white;">
+                                                <div class="col">
+                                                    <div class="d-table" style="width: 100%; height: 100%; font-size: 13px; font-family: 'Raleway', sans-serif; background-color: #00A08E; letter-spacing: 2px; padding-left: 3%;">
+                                                        <p class="d-table-cell" style="vertical-align: middle; color: white;">UPDATE YOUR ACCOUNT INFORMATION</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row no-gutters" style="width: 100%; overflow: scroll;">
+                                                <div class="col" style="display: inline-block;">
+                                                    <div class="row no-gutters" style="height: 55px;"></div>
+                                                    <div class="row no-gutters" style="">
+                                                        <div class="col-1"></div>
+                                                        <div class="col">    
+                                                            <div class="d-table" style="width: 100%; height: 30px; border-radius: 3px; background-color: #00A08E; font-size: 13px; color: white; padding: 5%; letter-spacing: 1px;">
+                                                                <p class="d-table-cell" style="vertical-align: middle; color: white;">To save the changes that you would like to make please confirm the new information and verify your password.</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-1"></div>
+                                                    </div>
+                                                    <div class="row no-gutters" style="height: 55px;"></div>
+                                                    <div class="row no-gutters" style="height: 55px;">
+                                                        <div class="col-1"></div>
+                                                        <div class="col">
+                                                            <input class="username_update", style="width: 100%; height: 36px; border: solid 2px #00A08E; border-radius: 3px; background-color: #f1f1f1; font-family: 'Raleway', sans-serif; font-size: 13px; color: white; padding-left: 5%; letter-spacing: 1px;" placeholder="Username" />
+                                                        </div>
+                                                        <div class="col-1"></div>
+                                                    </div>
+                                                    <div class="row no-gutters" style="height: 55px;">
+                                                        <div class="col-1"></div>
+                                                        <div class="col">
+                                                            <input class="email_update", style="width: 100%; height: 36px; border: solid 2px #00A08E; border-radius: 3px; background-color: #f1f1f1; font-family: 'Raleway', sans-serif; font-size: 12px; color: white; padding-left: 5%; letter-spacing: 1px;" placeholder="Email" />
+                                                        </div>
+                                                        <div class="col-1"></div>
+                                                    </div>
+                                                    <div class="row no-gutters" style="height: 55px">
+                                                        <div class="col-1"></div>
+                                                        <div class="col">
+                                                            <input style="width: 100%; height: 36px; border: solid 2px #00A08E; 00A08E-radius: 3px; background-color: #f1f1f1; font-family: 'Raleway', sans-serif; font-size: 12px; color: white; padding-left: 5%; letter-spacing: 1px;" placeholder="Password" />
+                                                        </div>
+                                                        <div class="col-1"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row no-gutters" style="height: 55px; width: 100%; background-color: #00A08E;">
+                                                <div class="col-6"></div>
+                                                <div class="col">
+                                                    <div class="d-table" style="width: 100%; height: 100%; font-size: 16px; font-family: 'Raleway', sans-serif; text-align: center; letter-spacing: 2px;">
+                                                        <a href="#" class="d-table-cell" id="cancel-account-update" style="color: white; vertical-align: middle;">CANCEL</a>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div style="width: 100%; height: 100%; font-size: 16px; font-family: 'Raleway', sans-serif; text-align: center; letter-spacing: 2px; color: white;  background-color: #00A08E; border: none;">UPDATE</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col"></div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row no-gutters tab-pane fade" id="password-pill" style="height: 100%; width: 100%;">
+                                <form action="" autocomplete="off" class="col-12" style="width: 100%; height: 100%; font-size: 12px; letter-spacing: 1px;">
+                                    <div class="row no-gutters" style="height: 55px;">
+                                        <div class="col" style="padding-left: 15px;">
+                                            <div class="d-table" style="width: 100%; height: 100%;">
+                                                <p class="d-table-cell" style="vertical-align: middle; font-size: 18px;">Password</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px; border-bottom: solid 1px #1C1B1B;">
+                                        <div class="col">
+                                            <div class="d-table" style="width: 100%; height: 100%; padding-left: 15px;">
+                                                <p class="d-table-cell" style="font-size: 12px; color: #767171;">Change your password or recover your current one.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px;"></div>
+                                    <div class="row no-gutters" style="height: 55px;">
+                                        <div class="col-4" style="padding-left: 15px;">
+                                            <div class="d-table" style="width: 100%; height: 100%; text-align: right;">
+                                                <p class="d-table-cell" style="vertical-align: middle; font-size: 12px;">Current password</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-1"></div>
+                                        <div class="col">
+                                            <input style="position: absolute; top: 15%; width: 100%; height: 36px; border: solid 1px #1C1B1B; border-radius: 3px; background-color: #767171; font-family: 'Raleway', sans-serif; font-size: 13px; color: white; padding-left: 5%;" />
+                                        </div>
+                                        <div class="col-1"></div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px;">
+                                        <div class="col-4"></div>
+                                        <div class="col-1"></div>
+                                        <div class="col">
+                                            <div class="d-table" style="width: 100%; height: 100%; padding-left: 5px;">
+                                                <p class="d-table-cell" style="font-size: 12px; color: #BD1376;">Forgot your password?</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-1"></div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px;">
+                                        <div class="col-4" style="padding-left: 15px;">
+                                            <div class="d-table" style="width: 100%; height: 100%; text-align: right;">
+                                                <p class="d-table-cell" style="vertical-align: middle; font-size: 12px;">New password</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-1"></div>
+                                        <div class="col">
+                                            <input style="position: absolute; top: 15%; width: 100%; height: 36px; border: solid 1px #1C1B1B; border-radius: 3px; background-color: #767171; font-family: 'Raleway', sans-serif; font-size: 13px; color: white; padding-left: 5%;" />
+                                        </div>
+                                        <div class="col-1"></div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px;">
+                                        <div class="col-4" style="padding-left: 15px;">
+                                            <div class="d-table" style="width: 100%; height: 100%; text-align: right;">
+                                                <p class="d-table-cell" style="vertical-align: middle; font-size: 12px;">Verify password</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-1"></div>
+                                        <div class="col">
+                                            <input style="position: absolute; top: 15%; width: 100%; height: 36px; border: solid 1px #1C1B1B; border-radius: 3px; background-color: #767171; font-family: 'Raleway', sans-serif; font-size: 13px; color: white; padding-left: 5%;" />
+                                        </div>
+                                        <div class="col-1"></div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px;"></div>
+                                    <div class="row no-gutters" style="height: 55px; border-top: solid 1px #1C1B1B;">
+                                        <div class="col">                                
+                                            <div class="hoverable", style="width: 100%; height: 100%; font-size: 18px; font-family: 'Raleway', sans-serif; letter-spacing: 2px; color: white;  background-color: #4C4A4A; border: none;">Update Password</div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="row no-gutters tab-pane fade" id="privacy-pill" style="height: 100%; width: 100%;">
+                                <div class="col-12" style="width: 100%; height: 100%; font-size: 12px; letter-spacing: 2px;">
+                                    <div class="row no-gutters" style="height: 55px; border-bottom: solid 1px #1C1B1B;">
+                                        <div class="col" style="padding-left: 15px;">
+                                            <div class="d-table" style="width: 100%; height: 100%;">
+                                                <p class="d-table-cell" style="vertical-align: middle; font-size: 18px;">Privacy</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row no-gutters tab-pane fade" id="delete-pill" style="width: 100%;">
+                                <div class="col-12" style="width: 100%; font-size: 12px; letter-spacing: 1px;">
+                                    <div class="row no-gutters" style="height: 55px; border-bottom: solid 1px #1C1B1B;">
+                                        <div class="col" style="padding-left: 15px;">
+                                            <div class="d-table" style="width: 100%; height: 100%;">
+                                                <p class="d-table-cell" style="vertical-align: middle; font-size: 18px;">Delete Account</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px;"></div>
+                                    <div class="row no-gutters" style="height: 55px;">
+                                        <div class="col" style="padding: 10px;">
+                                            <div class="d-table account-deletion hoverable" style="width: 100%; height: 100%; background-color: #b2196a; border-radius: 15px; text-align: center;">
+                                                <p class="d-table-cell" style="vertical-align: middle; font-size: 18px; color: white;">Delete your account</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters" style="height: 55px;"></div>
+                                    <div class="row no-gutters confirm-account-deletion-form" style="position: absolute; top: 0; height: 100%; width: 100%; background-color: #f1f1f1; z-index: 100000; opacity: 0.9; display: none;"></div>
+                                    <div class="row no-gutters confirm-account-deletion-form" style="position: absolute; top: 0; height: 100%; width: 100%; z-index: 1000000; display: none;">
+                                        <div class="col" style="padding: 2%;">
+                                            <div class="row no-gutters" style="height: 30%;"></div>
+                                            <div class="row no-gutters" style="height: 40%; width: 100%; background-color: #767171;">
+                                                <div class="col">
+                                                    <div class="d-table" style="width: 100%; height: 100%; font-size: 16px; font-family: 'Raleway', sans-serif; letter-spacing: 1px; padding-left: 3%;">
+                                                        <p class="d-table-cell" style="vertical-align: middle; text-align: center; color: white;">Are you sure you want to delete your account?</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row no-gutters" style="height: 30%; width: 100%;">
+                                                <div class="col">
+                                                    <div class="d-table" id="" style="width: 100%; height: 100%; font-size: 16px; font-family: 'Raleway', sans-serif; text-align: center; letter-spacing: 2px; background-color: #00A08E;">
+                                                        <p class="d-table-cell hoverable" style="color: white; vertical-align: middle;">YES</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col" id="cancel-account-deletion">
+                                                    <div class="d-table" style="width: 100%; height: 100%; font-size: 16px; font-family: 'Raleway', sans-serif; text-align: center; letter-spacing: 2px; background-color: #BD1376;">
+                                                        <a href="#" class="d-table-cell" style="color: white; vertical-align: middle;">NO</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

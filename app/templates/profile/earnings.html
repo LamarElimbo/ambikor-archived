@@ -1,0 +1,140 @@
+{% extends skeleton['template'] %}
+{% block title %}Ambikor - Your Piggy Bank{% endblock %}
+{% block startscript %}
+    $(document).on({ click: function (){ $("#potential_earnings_info").toggle(); } }, "#potential_earnings_info_button");
+    $(document).on({ click: function (){ $("#pending_earnings_info").toggle(); } }, "#pending_earnings_info_button");
+    $(document).on({ click: function (){ $("#earnings_to_date_info").toggle(); } }, "#earnings_to_date_info_button");
+{% endblock %}
+{% block content %}
+<a href="{{ url_for('home.money_info')}}" class="row no-gutters">
+    <div class="col-12" style="padding: 5px; padding-top: 20px; text-align: center; background-color: #d8d5d5; letter-spacing: 1px; text-align: center; font-size: 12px; letter-spacing: 2px;">
+        <p>Learn more about your earnings</p>
+    </div>
+</a>
+<div class="row no-gutters">
+    <div class="col-12 col-md-4" style="border-top: solid 1px #d8d5d5;">
+        <div class="row no-gutters">
+            <div class="col-12 d-table" style="padding: 20px;">
+                <p class="d-table-cell" style="vertical-align: middle; font-size: 14px; letter-spacing: 5px; padding-right: 10px;">Potential Earnings</p>
+                <img src="../../static/images/help_icon.png" class="hoverable" id="potential_earnings_info_button" style="width: 20px; height: 20px;">
+            </div>
+        </div>
+        <div class="row no-gutters" id="potential_earnings_info" style="display: none;">
+            <div class="col-12 d-table" style="padding: 20px; padding-top: 0px;">
+                <p class="d-table-cell" style="vertical-align: middle; font-size: 11px; letter-spacing: 2px;">These are your service requests with a status of acceptance_pending or accepted. The service requester has not paid yet.</p>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-12 d-table" style="padding: 20px; padding-top: 0;">
+                <p class="d-table-cell" style="vertical-align: middle; font-size: 28px; letter-spacing: 5px;">${{ earnings['potential_earnings'] }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4" style="border-top: solid 1px #d8d5d5; border-left: solid 1px #d8d5d5; border-right: solid 1px #d8d5d5;">
+        <div class="row no-gutters">
+            <div class="col d-table" style="padding: 20px;">
+                <p class="d-table-cell" style="vertical-align: middle; font-size: 14px; letter-spacing: 5px; padding-right: 10px;">Pending Earnings</p>
+                <img src="../../static/images/help_icon.png" class="hoverable" id="pending_earnings_info_button" style="width: 20px; height: 20px;">
+            </div>
+        </div>
+        <div class="row no-gutters" id="pending_earnings_info" style="display: none;">
+            <div class="col d-table" style="padding: 20px; padding-top: 0px;">
+                <p class="d-table-cell" style="vertical-align: middle; font-size: 11px; letter-spacing: 2px;">These are your service requests with a status of charge_processed or complete. The service requester has paid and service completion is awaiting confirmation.</p>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col d-table" style="padding: 20px; padding-top: 0;">
+                <p class="d-table-cell" style="vertical-align: middle; font-size: 28px; letter-spacing: 5px;">${{ earnings['pending_earnings'] }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4" style="border-top: solid 1px #d8d5d5;">
+        <div class="row no-gutters">
+            <div class="col d-table" style="padding: 20px;">
+                <p class="d-table-cell" style="vertical-align: middle; font-size: 14px; letter-spacing: 5px; padding-right: 10px;">Available to Pay Out</p>
+                <img src="../../static/images/help_icon.png" class="hoverable" id="earnings_to_date_info_button" style="width: 20px; height: 20px;">
+            </div>
+        </div>
+        <div class="row no-gutters" id="earnings_to_date_info" style="display: none;">
+            <div class="col d-table" style="padding: 20px; padding-top: 0px;">
+                <p class="d-table-cell" style="vertical-align: middle; font-size: 11px; letter-spacing: 2px;">This is your current balance available to be paid out. Click the "Pay out to bank" button to send your funds to your bank account.</p>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col d-table" style="padding: 20px; padding-top: 0; padding-bottom: 0;">
+                <p class="d-table-cell" style="vertical-align: middle; font-size: 28px; letter-spacing: 5px;">${{ earnings['available_to_payout'] }}</p>
+            </div>
+        </div>
+        {% if earnings['available_to_payout'] > 0 %}
+            <div class="row no-gutters" style="padding: 20px;">
+                <div class="col-12 d-table payout hoverable" style="height: 40px; padding: 7px; border: none; border-radius: 3px; background-color: #00A08E; font-size: 14px; letter-spacing: 2px; text-align: center; box-shadow: 1px 5px 6px black;">
+                    <p class="d-table-cell" style="height: 100%; vertical-align: middle;">Pay out to bank</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<div class="row no-gutters" style="padding-left: 10px;">
+    <div class="col-12">
+        <div class="row no-gutters">
+            <div class="col-12 d-table" style="border-top: solid 1px #d8d5d5; border-bottom: solid 1px #d8d5d5; padding: 30px; padding-left: 10px;">
+                <p class="d-table-cell" style="vertical-align: middle; font-size: 14px; letter-spacing: 5px;">Total Earnings to Date: ${{ earnings['earnings_to_date'] }}</p>
+            </div>
+        </div>
+        {% if skeleton['user']['profile']['services']|length == 0 %}
+            <div class="row no-gutters" style="height: 300px;">
+                <div class="col-12 d-table" style="height: 100%; width: 100%; padding: 20px;">
+                    <p class="d-table-cell" style="height: 100%; width: 100%; vertical-align: middle; text-align: center; border-top: solid 1px #d8d5d5; letter-spacing: 2px;">It looks like you aren't offering any services.</p>
+                </div>
+            </div>
+        {% elif skeleton['user']['profile']['notifications'] is not defined or earnings['potential_earnings'] == 0 and earnings['pending_earnings'] == 0 and earnings['earnings_to_date'] == 0 %}
+            <div class="row no-gutters" style="height: 300px;">
+                <div class="col-12 d-table" style="height: 100%; width: 100%; padding: 20px;">
+                    <p class="d-table-cell" style="height: 100%; width: 100%; vertical-align: middle; text-align: center; letter-spacing: 2px;">It looks like no one has purchased any services from you yet.</p>
+                </div>
+            </div>
+        {% else %}
+            <div class="row no-gutters" style="background-color: #21252a;">
+                <div class="col-12" style="padding: 10px;">
+                    <p class="d-table-cell" style="vertical-align: middle; font-size: 14px; letter-spacing: 3px;">All of Your Earnings</p>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <table class="col-12 table table-hover table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">User</th>
+                            <th scope="col">Service</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if skeleton['user']['profile']['notifications'] is defined %}
+                            {% for notification in skeleton['user']['profile']['notifications']['notifications_list'] %}
+                                {% if notification['service_provider'] == skeleton['user']['user_id'] %}
+                                    {% if notification['status']['current_status'] not in ['rejected', 'cancelled'] %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url_for('profile.user_profile', username=notification['user']['username']) }}">
+                                                    <img src="{{ notification['user']['profile_image']['src'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 37px; height: 37px; object-fit: cover; border-radius: 50%;">
+                                                    <span style="font-size: 16px; color: #00A08E; margin-left: 10px;">{{ notification['user']['name'] }}</span>
+                                                </a>
+                                            </td>
+                                            <td>{{ notification['service'] }}</td>
+                                            <td>{{ notification['status']['current_status'] }}</td>
+                                            <td>{{ notification['date_time_last_message'] }}</td>
+                                            <td>${{ notification['cost'] }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

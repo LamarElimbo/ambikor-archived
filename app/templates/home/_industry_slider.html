@@ -1,0 +1,99 @@
+{% block industry_slider %}
+<div class="container-fluid icon-header" style="height: 100px; width: 102%; padding: 0; position: relative; left: -2%; background-color: #f1f1f1; overflow: auto;">
+    <div class="row no-gutters flex-row flex-nowrap" style="height: 100px; padding-top: 15px;">
+        {% for icon in [("beauty", "cat_beauty"), ("business", "cat_business"), ("coding", "cat_coding"), ("commerce", "cat_commerce"), ("community", "cat_community"), ("construction", "cat_structure"), ("data", "cat_data"), ("design", "cat_design"), ("earth", "cat_environment"), ("education", "cat_education"), ("fashion", "cat_appearance"), ("health", "cat_health"), ("hospitality", "cat_hospitality"), ("language", "cat_language"), ("legal", "cat_legal"), ("math", "cat_math"), ("media", "cat_entertainment"), ("music", "cat_culture"), ("photography", "cat_photography"), ("retail", "cat_goods"), ("science", "cat_science"), ("security", "cat_safeguard"), ("space", "cat_space"), ("sports-rec", "cat_recreation"), ("tech", "cat_electronics"), ("travel", "cat_travel"), ("wildlife", "cat_wildlife"), ("writing", "cat_writing"), ("video", "cat_video"), ("xxx", "cat_xxx")] %}
+            <a href="/careers/{{ icon[0] }}" class="col-3 col-md-2 search-career-tag" style="height: 85px; display: inline-block; color: black;">
+                <div class="row">
+                    <div class="col">
+                        <img src="../../../static/images/{{ icon[1] }}.png" style="height: 50px; display: block; margin-left: auto; margin-right: auto;">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col d-table">
+                        <div class="d-table-cell" style="width: 100%;">
+                            <p style="text-align: center; font-size: 10px; letter-spacing: 1px; margin-top: 10px; text-transform: uppercase;">{{ icon[0] }}</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% if loop.index0 == 2 %}
+                <a class="col-3 d-md-none hoverable see-all-header-icons" style="height: 85px; display: inline-block; color: black; padding-top: 10px;">
+                    <div class="row">
+                        <div class="col">
+                            <img src="/static/images/arrow_right_bare.png" style="height: 40px; display: block; margin-left: auto; margin-right: auto;">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col d-table">
+                            <div class="d-table-cell" style="width: 100%;">
+                                <p style="text-align: center; font-size: 10px; letter-spacing: 1px; margin-top: 10px; text-transform: uppercase;">See More</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% elif loop.index0 == 4 %}
+                <a class="d-none d-md-block col-md-2 hoverable see-all-header-icons" style="height: 85px; display: inline-block; color: black; padding-top: 10px;">
+                    <div class="row">
+                        <div class="col">
+                            <img src="/static/images/arrow_right_bare.png" style="height: 40px; display: block; margin-left: auto; margin-right: auto;">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col d-table">
+                            <div class="d-table-cell" style="width: 100%;">
+                                <p style="text-align: center; font-size: 10px; letter-spacing: 1px; margin-top: 10px; text-transform: uppercase;">See More</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+            {% endif %}
+        {% endfor %}
+    </div>
+ </div>
+<div class="row no-gutters icon-header-full" style="width: 100%; position: relative; top: 10px; background-color: #f1f1f1; margin-bottom: 20px; display: none;">
+    <div class="col">
+        <div class="row no-gutters" style="text-align: right; padding: 10px; padding-right: 30px;">
+            <div class="col">
+                <img src='/static/images/close_icon.png' class="hoverable see-less-header-icons" style="width: 20px;">
+            </div>
+        </div>
+        <div class="row no-gutters" style="padding: 10px;">
+            {% for icon in [("beauty", "cat_beauty"), ("business", "cat_business"), ("coding", "cat_coding"), ("commerce", "cat_commerce"), ("community", "cat_community"), ("construction", "cat_structure"), ("data", "cat_data"), ("design", "cat_design"), ("earth", "cat_environment"), ("education", "cat_education"), ("fashion", "cat_appearance"), ("health", "cat_health"), ("hospitality", "cat_hospitality"), ("language", "cat_language"), ("legal", "cat_legal"), ("math", "cat_math"), ("media", "cat_entertainment"), ("music", "cat_culture"), ("photography", "cat_photography"), ("retail", "cat_goods"), ("science", "cat_science"), ("security", "cat_safeguard"), ("space", "cat_space"), ("sports-rec", "cat_recreation"), ("tech", "cat_electronics"), ("travel", "cat_travel"), ("wildlife", "cat_wildlife"), ("writing", "cat_writing"), ("video", "cat_video"), ("xxx", "cat_xxx")] %}
+                <a href="/careers/{{ icon[0] }}" class="col-3 col-md-2 search-career-tag" style="display: inline-block; color: black;">
+                    <div class="row">
+                        <div class="col-12">
+                            <img src="../../../static/images/{{ icon[1] }}.png" style="height: 50px; display: block; margin-left: auto; margin-right: auto;">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 d-table" style="width: 100%;">
+                            <div class="d-table-cell" style="height: 100%; width: 100%;">
+                                <p style="text-align: center; font-size: 10px; letter-spacing: 1px; margin-top: 10px; text-transform: uppercase;">{{ icon[0] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+ </div>
+<div class="row no-gutters total-row" style="padding: 20px; margin-bottom: 20px; background-color: #00A08E;">
+    <div class="col-6" id="open-career-search-form" style="padding: 10px;">
+        <div class="d-table" style="width: 100%;">
+            <a href="#" class="d-table-cell" style="width: 100%; letter-spacing: 2px; color: white; font-size: 10px; text-align: left;">ADVANCED EXPERT SEARCH</a>
+        </div>
+    </div>
+    <div class="col-6 hoverable" id="close-career-search-form" style="display: none; padding: 10px;">
+        <div class="d-table" style="width: 100%;">
+            <p class="d-table-cell" style="width: 100%; text-align: left; font-size: 10px; letter-spacing: 2px; color: white;">CLOSE</p>
+        </div>
+    </div>
+    <div class="col-6" style="padding: 10px;">
+        <div class="d-table" style="width: 100%;">
+            <a href="{{ url_for('career.career_archive') }}" class="d-table-cell" style="width: 100%; font-size: 10px; text-align: right; letter-spacing: 2px; color: white;">VIEW ALL EXPERTS</a>
+        </div>
+    </div>
+</div>
+<div class="row no-gutters" id="career-search-form"></div>
+{% endblock %}

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block meta %}{% endblock %}
+    <meta charset="UTF-8">
+    <meta name="description" content="One-on-one guidance and mentorship from a collection of experts spanning every career imaginable.">
+    <meta name="keywords" content="careers, guidance, mentorship, experts, professionals, marketplace"/>
+    <meta name="author" content="Lamar Elimbo">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" href="/static/images/ambit_tab2.png">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Assistant|Raleway:300&display=swap" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            {% block startscript %}{% endblock %}
+            {% block startscript2 %}{% endblock %}
+            ////////////////////////////////// HEADER & SIDBAR /////////////////////////
+            $(".profile-icon-anchor").click(function(){ 
+                if($(this).hasClass("profile-icon")){ 
+                    $("#profile-icon-panel").show(); 
+                    $(this).removeClass("profile-icon");
+                }else{
+                    $("#profile-icon-panel").hide(); 
+                    $(".profile-icon-anchor").addClass("profile-icon");
+                }
+            });
+            $(".login-button-anchor").click(function(){ 
+                $("#hidden-login-form").show();
+                $(".header-login").hide();
+                $(".login-background-faded").show();
+                $.ajax({
+                   url: "/login_form",
+                   type: "get",
+                   success: function(response) { $('#hidden-login-form').append(response); }
+                });
+            });
+             $(document).on({ click: function (){ 
+                 $(".login-background-faded").hide(); 
+                 $("#hidden-login-form").empty();
+                 $(".header-login").show();
+             } }, ".collapse-login-form");
+            $(document).on({
+                click: function (e) { 
+                    if(!$(e.target).hasClass('profile-icon-anchor')) {
+                        var container = $("#profile-icon-panel");
+                        if (!container.is(e.target) && container.has(e.target).length === 0) { 
+                            container.hide(); $(".profile-icon-anchor").addClass("profile-icon"); 
+                        }
+                    }
+                },
+            });
+            $(document).on({
+                click: function (){ $(".icon-header").hide(); $(".icon-header-full").show(); $(".icon-header-full").css({"display": "inline-block"}); }
+            }, ".icon-header");
+            $(document).on({
+                click: function (){ $(".icon-header-full").hide(); $(".icon-header").show(); }
+            }, ".icon-header-full");
+                                     
+    $(document).on({
+        click: function (){
+            $.ajax({
+               url: "/open_career_search_form",
+               type: "get",
+               success: function(response) { $('#career-search-form').empty(); $('#career-search-form').append(response); }
+            });
+        }
+    }, "#open-career-search-form");
+
+    $(document).on({ click: function (){ $('#career-search-form').empty(); }}, "#close-career-search-form");
+
+$(document).on({
+        click: function (){
+            var tags = $(".industry-selected").map(function(){ return $.trim($(this).text().replace("/", "")); }).get()
+            window.location.href = tags.join('+')
+        }
+    }, "#search-careers");
+
+    $(document).on({
+        click: function (){
+            $(this).parent().parent().parent().parent().find("#industry-input-area").append("<div class='d-table remove-tag industry-selected hoverable' style='margin: 5px; padding-left: 10px; padding-right: 10px; height: 23px; display: inline-block; border-radius: 5px; background-color: #BD1376; letter-spacing: 1px;'><p class='d-table-cell' style='vertical-align: middle; font-size: 11px; text-align: center; text-transform: capitalize;'>" + $(this).attr('id') + "</p></div>")
+        }
+    }, ".industry-type-selection");
+        });
+    </script>
+    <style>
+        {% block style %}{% endblock %}
+        {% block style2 %}{% endblock %}
+        .hoverable:hover { cursor: pointer; }
+        ::selection { background: #BD1376; /* WebKit/Blink Browsers */ }
+        ::-moz-selection { background: #BD1376; /* Gecko Browsers */ }
+        .thin-text { font-family: 'Raleway', sans-serif; }
+        .thick-text { font-family: 'Assistant', sans-serif; }
+        /* Header Profile */
+        .profile-nav { position: absolute; top: 5%; width: 100%; margin: 0; padding: 0; list-style: none; }
+        .profile-nav li { text-indent: 20px; line-height: 50px; }
+        .profile-nav li a { display: block; text-decoration: none; color: black; position: relative; width: 100%; }
+        .profile-nav li a:hover { text-decoration: none; color: black; background: rgba(255,255,255,0.2); }
+        .profile-nav li a:active,
+        .profile-nav li a:focus { text-decoration: none; }
+        .profile-nav > .profile-brand { height: 65px; font-size: 18px; line-height: 60px; }
+        .profile-nav > .profile-brand a { color: #999999; }
+        .profile-nav > .profile-brand a:hover { color: #fff; background: none; }
+        .alert { background-color: #83FFDB; color: #03695D; }
+        /* Scroll Bar */
+        ::-webkit-scrollbar-track { background-color: #f1f1f1; }
+        ::-webkit-scrollbar { width: 7px; height: 0; background-color: #F5F5F5; }
+        ::-webkit-scrollbar-thumb { border-radius: 10px; -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); background-color: #555; }
+        /* Header Logo */
+        .header-logo-large { height: 43px; display: none; }
+        .header-logo-col { padding-top: 5px; }
+        @media (min-width: 576px) {
+            .header-logo-large { display: initial; }
+            .header-logo-small { display: none; }
+            .header-logo-col { padding-top: 0; }
+        }
+        /* Autocomplete */
+        #search_comp:focus{ outline: none; }
+        .autocomplete { position: relative; }
+        .autocomplete-items { position: absolute; border-bottom: none; color: white; border-top: none; z-index: 99; top: 50px; left: 0; right: 0; }
+        .autocomplete-items div { padding: 5px; cursor: pointer; background-color: #4C4A4A;  border-bottom: 1px solid #f1f1f1; }
+        .autocomplete-items div:hover { background-color: #767171; }
+        .autocomplete-active { background-color: DodgerBlue !important; color: #f1f1f1; }
+        .article { margin-top: 15px; margin-bottom: 10px; padding: 20px; padding-top: 0; text-decoration: none;}
+        .article-title { position: absolute; width: 90%; bottom: 10px; left: 10px; background-color: #e6e6e6; padding-top: 10px; padding-bottom: 10px; opacity: 0.9; }
+        .article-title p { white-space: normal; padding: 5px; padding-left: 15px; letter-spacing: 4px; font-size: 12px; text-transform: uppercase; }
+        .see-all-button {height: 30px; font-size: 11px; text-align: center; background-color: #00A08E; border-radius: 50px; color: white; letter-spacing: 2px;}
+        .see-all-button .d-table-cell {vertical-align: middle; text-transform: uppercase;}
+        .service-steps-row {padding: 40px; border-bottom: dotted 1px #767170;}
+    </style>    
+</head>
+<body style="background-color: #f1f1f1;">
+    <div class="row no-gutters login-background-faded" style="position: fixed; top: 0; height: 100%; width: 100%; background-color: #f1f1f1; z-index: 10; opacity: 0.95; display: none;"></div>
+    <div class="thin-text" id="container" style="position: absolute; height: 100%; width: 100%; background-color: #f1f1f1; font-family: 'Raleway', sans-serif; color: black;">
+        <div class="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            Welcome to Ambikor 1.0. This project has been archived, but you can login to the site as a fake user. Feel free to take a look around.
+        </div>
+        <div class="row no-gutters" style="position: fixed; height: 56px; width: 100%; background-color: #e6e6e6; z-index: 1000;">
+            <div class="col-2 col-sm-4 col-md-5">
+                <div class="row no-gutters">
+                    <div class="col header-logo-col" style="padding-top: 5px;">
+                        <a href="{{ url_for('home.home_page') }}" style="position: relative; left: 30px;">
+                            <img class="header-logo-large" src='/static/images/logo_text.png' style="height: 43px;">
+                            <img class="header-logo-small" src='/static/images/ambit_tab2.png' style="height: 33px;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="d-none d-sm-block col-sm-7 col-md-6">
+                <form action="" method='post' class="row no-gutters header-login">
+                    <div class="col thin-text">
+                        <div class="row no-gutters" style="padding-right: 15px; padding-left: 15px;">
+                            <div class="col-4">
+                                <input style="position: relative; top: 15px; left: 5%; width: 90%; height: 30px; border: 1px solid #BD1376; border-radius: 5px; background-color: #f1f1f1; font-size: 12px; padding-left: 3%;" placeholder="Email" value="fake_user@hotmail.com" />
+                            </div>
+                            <div class="col-4">
+                                <input style="position: relative; top: 15px; left: 5%; width: 90%; height: 30px; border: 1px solid #BD1376; border-radius: 5px; background-color: #f1f1f1; font-size: 12px; padding-left: 3%;" placeholder="Password" value="fake_password" />
+                            </div>
+                            <div class="col-4">
+                                <a href="{{ url_for('auth.user_login') }}" style="text-decoration: none;">
+                                    <div class="hoverable" style="position: relative; top: 15px; left: 5%; width: 90%; height: 30px; border: none; border-radius: 3px; background-color: #BD1376; font-size: 11px; color: white; letter-spacing: 2px; text-align: center; display: flex; justify-content: center; align-items: center;">LOG IN</div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="d-sm-none col-8">
+                <div class="header-login">
+                    <div class="d-table" style="padding-left: 20%; width: 80%;">
+                        <p class="d-table-cell login-button-anchor hoverable" style="vertical-align: middle; position: relative; top: 15px; height: 30px; border: 1px solid #BD1376; background-color: #BD1376; border-radius: 3px; font-size: 12px; color: white; letter-spacing: 2px; text-align: center;">LOG IN</p>
+                    </div>
+                </div>
+            </div>
+            <div id="hidden-login-form"></div>
+            <div class="col-2 col-sm-1">
+                <a class="hoverable">
+                    <img class="profile-icon-anchor profile-icon" src='/static/images/more_header_icon.png' style="position: absolute; top: 17px; left: 20%; width: 25px; padding: 2px;">
+                </a>
+            </div>
+            <div id="profile-icon-panel" style="position: fixed; width: 260px; height: 400px; right: 15px; top: 50px; background-color: #e6e6e6; box-shadow: 1px 5px 6px black; border: solid 2px #1C1B1B; display: none;">
+                <ul class="profile-nav" style="font-size: 14px; text-align: left; letter-spacing: 1px;">
+                    <li class="row no-gutters">
+                        <a class="col" href="#">
+                            <div class="row no-gutters" style="height: 50px;">
+                                <div class="col-2"><img src='/static/images/forgot_password_icon.png' style="height: 17px;"></div>
+                                <div class="col-10">Forgot Your Password</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="row no-gutters">
+                        <a class="col" href="{{ url_for('home.home_page') }}">
+                            <div class="row no-gutters" style="height: 50px;">
+                                <div class="col-2"><img src='/static/images/logout_icon.png' style="height: 17px;"></div>
+                                <div class="col-10">Create Account</div>
+                            </div>
+                        </a>
+                    </li>
+                    <div class="row no-gutters" style="height: 68px; padding: 5px; border-bottom: solid 1px #1C1B1B; border-top: solid 1px #1C1B1B;">
+                        <div class="col-12">
+                            <form action="#" method='get' autocomplete="off">
+                                <input type="text" name="search_comp" id="search_comp" class="d-table autocomplete" value="Search Careers" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" style="position: absolute; top: 10px; width: 100%; height: 36px; border: solid 1px #1C1B1B; border-radius: 3px; background-color: #f1f1f1; font-size: 13px; padding-left: 5%; letter-spacing: 1px;">
+                                <div style="height: 36px; width: 50px; position: absolute; right: 0%; top: 10px;">
+                                    <img src='/static/images/search.png' style="position: absolute; top: 10px; left: 37%; width: 14px;">
+                                    <input class="hoverable" type="submit" style="height: 100%; width: 100%; border: none; opacity: 0;">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <li class="row no-gutters">
+                        <a class="col" href="{{ url_for('home.about') }}">
+                            <div class="row no-gutters" style="height: 50px;">
+                                <div class="col-2"><img src='/static/images/ambit_tab2.png' style="height: 17px; position: relative; top: -3px;"></div>
+                                <div class="col-10">About Ambikor</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="row no-gutters">
+                        <a class="col" href="{{ url_for('home.career_guide_info')}}">
+                            <div class="row no-gutters" style="height: 50px;">
+                                <div class="col-2"><img src='/static/images/crown_icon.png' style="height: 17px;"></div>
+                                <div class="col-10">Become a Mentor</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="row no-gutters" style="border-bottom: solid 1px #1C1B1B;">
+                        <a class="col" href="{{ url_for('home.money_info')}}">
+                            <div class="row no-gutters" style="height: 50px;">
+                                <div class="col-2"><img src='/static/images/prize_money_icon.png' style="height: 17px;"></div>
+                                <div class="col-10">How to Earn Money</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="row no-gutters">
+                        <a class="col-3" href="https://www.linkedin.com/company/ambikor/" target="_blank"><img src="/static/images/linkedin_side.png" style="width: 30%;"></a>
+                        <a class="col-3" href="https://twitter.com/ambikor" target="_blank"><img src="/static/images/twitter_side.png" style="width: 30%;"></a>
+                        <a class="col-3" href="https://www.facebook.com/ambikor/" target="_blank"><img src="/static/images/facebook_side.png" style="width: 30%;"></a>
+                        <a class="col-3" href="https://www.instagram.com/ambikor/" target="_blank"><img src="/static/images/instagram_side.png" style="width: 30%;"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="wrapper" style="height: 100%;">
+            <div id="page-content-wrapper" style="padding-top: 56px;">
+                <div class="row no-gutters outer-body-row" style="background-color: #f1f1f1; display: inline;">
+                    <div class="col-12 outer-body-col" style="height: 100%;">
+                        {% include industry_slider ignore missing %}
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function autocomplete(inp, arr) {
+          var currentFocus;
+          inp.addEventListener("input", function(e) {
+              var a, b, i, val = this.value;
+              closeAllLists();
+              if (!val) { return false; }
+              currentFocus = -1;
+              a = document.createElement("DIV");
+              a.setAttribute("id", this.id + "autocomplete-list");
+              a.setAttribute("class", "autocomplete-items");
+              a.setAttribute("style", "overflow-y: scroll; height: 30vh;");
+              this.parentNode.appendChild(a);
+              for (i = 0; i < arr.length; i++) {
+                if (arr[i]["name"].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                      b = document.createElement("DIV");
+                      b.setAttribute("class", arr[i]["id"]);
+                      b.setAttribute("style", "width: 100%; text-transform: capitalize;");
+                      b.innerHTML = "<strong>" + arr[i]["name"].substr(0, val.length) + "</strong>";
+                      b.innerHTML += arr[i]["name"].substr(val.length);
+                      b.innerHTML += "<input type='hidden' value='" + arr[i]["name"] + "' class='" + arr[i]["id"] + "'>";
+                      b.addEventListener("click", function(e) {
+                          inp.value = this.getElementsByTagName("input")[0].value;
+                          closeAllLists();
+                          window.location.href = "/career/" + this.className;
+                      });
+                  a.appendChild(b);
+                }
+              }
+          });
+          function closeAllLists(elmnt) {
+            var x = document.getElementsByClassName("autocomplete-items");
+            for (var i = 0; i < x.length; i++) { if (elmnt != x[i] && elmnt != inp) { x[i].parentNode.removeChild(x[i]); } }
+          }
+          document.addEventListener("click", function (e) { closeAllLists(e.target); });
+        }
+        autocomplete(document.getElementsByName("search_comp")[0], {{ skeleton['full_career_list'] | tojson | safe }});
+    </script>
+    {% block endscript %}{% endblock %}
+</body>
+</html>

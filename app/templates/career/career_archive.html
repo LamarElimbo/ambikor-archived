@@ -1,0 +1,104 @@
+{% extends skeleton['template'] %}
+{% block title %}Ambikor - Find an Expert{% endblock %}
+{% block style %}
+.form-control { 
+    width: 100%; 
+    background-color: #f1f1f1; 
+    border: solid 1px #BD1376; 
+    color: white; 
+    padding: 7px; 
+    font-size: 14px; 
+    letter-spacing: 2px; 
+}
+.industry-type-submit {
+    height: 36px;
+    width: 100%;
+    background-color: #BD1376;
+    border: none;
+    font-family: 'Raleway', sans-serif;
+    color: white;
+    letter-spacing: 4px; 
+    font-size: 20px;
+}
+{% endblock %}
+{% block content %}
+<div class="row no-gutters" style="padding: 20px;">
+    <div class="col-12 thick-text" style="text-align: center;">
+        <p style="font-size: 18px; letter-spacing: 3px; text-transform: uppercase;">Find an Expert Based on Their Career</p>
+    </div>
+</div>
+{% set alphabet_1 = [('a', 'A'), ('b', 'B'), ('c', 'C'), ('d', 'D'), ('e', 'E'), ('f', 'F'), ('g', 'G'), ('h', 'H'), ('i', 'I')] %}
+{% set alphabet_2 = [('j', 'J'), ('k', 'K'), ('l', 'L'), ('m', 'M'), ('n', 'N'), ('o', 'O'), ('p', 'P'), ('q', 'Q'), ('r', 'R')] %}
+{% set alphabet_3 = [('s', 'S'), ('t', 'T'), ('u', 'U'), ('v', 'V'), ('w', 'W'), ('x', 'X'), ('y', 'Y'), ('z', 'Z'), ('','')] %}
+<div class="row no-gutters" style="padding-top: 10px; padding-bottom: 10px; font-size: 11px; border-top: dashed 1px #4C4A4A; border-bottom: dashed 1px #4C4A4A;">
+    <div class="col-12 col-md-4" style="display: flex; justify-content: space-around; text-align: center;">
+        {% for letter in alphabet_1 %}
+            <a href="/careers/index/{{ letter[0] }}" class="career-letter" style="width: 30px; padding-top: 7px; padding-bottom: 7px; text-decoration: none; color: black;">{{ letter[1] }}</a>
+        {% endfor %}
+    </div>
+    <div class="col-12 col-md-4" style="display: flex; justify-content: space-around; text-align: center;">
+        {% for letter in alphabet_2 %}
+            <a href="/careers/index/{{ letter[0] }}" class="career-letter" style="width: 30px; padding-top: 7px; padding-bottom: 7px; text-decoration: none; color: black;">{{ letter[1] }}</a>
+        {% endfor %}
+    </div>
+    <div class="col-12 col-md-4" style="display: flex; justify-content: space-around; text-align: center;">
+        {% for letter in alphabet_3 %}
+            <a href="/careers/index/{{ letter[0] }}" class="career-letter" style="width: 30px; padding-top: 7px; padding-bottom: 7px; text-decoration: none; color: black;">{{ letter[1] }}</a>
+        {% endfor %}
+    </div>
+</div>
+<div class="row no-gutters" style="height: 100%;">
+   <div class="col-12" id="careers-spot">
+        <div class="row no-gutters total-row" style="padding: 20px;">
+            <div class="col">
+                <p style="font-size: 14px; text-align: center; letter-spacing: 2px; color: black;">Total Careers: {{ num_careers }}</p>
+            </div>
+        </div>
+       <div class="row no-gutters">
+           {% if careers | length > 0 %}
+               {% for career in careers %}
+                    <div class="col-12 col-xl-6">
+                       <a href="{{ url_for('career.career_page', career_id=career['career_id'])}}" class="row no-gutters" id="{{career['career_id']}}" style="min-height: 70px; margin: 10px; padding: 5px; text-decoration: none; white-space: nowrap; {% if skeleton['user_type'] == 'admin' %}{% if career['users'] is defined and career['users']|length > 0 %} border: solid 1px #0da08d; background-color: #0da08d1c;{% else %}border: solid 1px #b2196a; background-color: #c663a32e;{% endif %}{% else %}border: solid 1px #1C1B1B;{% endif %}">
+                           <div class="col-4 col-md-2" style="padding-right: 10px; padding-left: 10px; margin-top: 5px; margin-bottom: 5px;">
+                               <img src="{{ career['image'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 100%; height: 100%; max-height: 100px; object-fit: cover;">
+                           </div>
+                           <div class="col-8 col-md-10" style="padding-right: 10px; padding-left: 10px;">
+                               <div class="row no-gutters">
+                                   <div class="col-12 col-md-5" style="padding-right: 10px; padding-left: 10px; margin-bottom: 5px; white-space: normal;">
+                                       <div class="d-table" style="width: 100%; height: 100%;">
+                                           <p class="d-table-cell" style="font-size: 14px; vertical-align: middle; letter-spacing: 2px; color: black; text-transform: capitalize;">{{ career['title'] }}</p>
+                                       </div>
+                                   </div>
+                                   <div class="col-12 col-md-7" style="padding-right: 10px; padding-left: 10px;">
+                                       <div class="row" style="padding-top: 10px">
+                                            {% for career_tag in career['tags'] %}
+                                                <div class="col-4 hoverable industry-type-selection" id="{{ career_tag }}">
+                                                    <div class="row" style="margin-bottom: 5px;">
+                                                        <div class="col-12">
+                                                            <img src="{{ skeleton['tag_icons']['icons'][career_tag] }}" style="height: 40px; display: block; margin-left: auto; margin-right: auto;">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <p style="text-align: center; font-size: 10px; text-transform: capitalize; letter-spacing: 1px; color: black;">{{ career_tag }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </a>
+                    </div>
+               {% endfor %}
+               <div class="row no-gutters" style="height: 15px;"></div>
+            {% else %}
+                <div class="d-table" style="width: 100%;">
+                    <p class="d-table-cell" style="text-align: center; letter-spacing: 2px;">Couldn't find any careers under this category yet, but more are being added frequently, so stay tuned!</p>
+                </div>
+            {% endif %}
+       </div>
+   </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% if username_exists == 'yes' %}
+    {% if has_username == 'no' %}
+        <div class="col d-table" style="width: 100%; padding-left: 20px; padding-bottom: 20px;">
+            <img src="../../static/images/grey_x_icon.png" style="width: 20px; margin-right: 10px;">This username already exists
+        </div>
+    {% endif %}
+{% endif %}
+{% if character_validation == 'fail' %}
+    <div class="col d-table" style="width: 100%; padding-left: 20px; padding-bottom: 20px;">
+        <img src="../../static/images/grey_x_icon.png" style="width: 20px; margin-right: 10px;">Usernames can only contain letters, numbers and these symbols -_+
+    </div>
+{% endif %}

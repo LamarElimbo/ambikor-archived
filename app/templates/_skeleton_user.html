@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: #f1f1f1;">
+<head>
+    {% block meta %}{% endblock %}
+    <meta charset="UTF-8">
+    <meta name="description" content="One-on-one guidance and mentorship from a collection of experts spanning every career imaginable.">
+    <meta name="author" content="Lamar Elimbo">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" href="/static/images/ambit_tab2.png">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Assistant|Raleway:300&display=swap" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="css/bootstrap-datetimepicker.css"> -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/css/bootstrap-datetimepicker.min.css"> 
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/css/bootstrap-datetimepicker-standalone.css"> 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/js/bootstrap-datetimepicker.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            {% block startscript %}{% endblock %}
+            {% block startscript2 %}{% endblock %}
+            ////////////////////////////////// COLLECTIONS /////////////////////////////////
+            $(document).on({
+                click: function (event){
+                    $(this).hide(); 
+                    $(this).parent().find('.bookmark-remove').show();
+                    $.ajax({ url: "/add_bookmark", type: "post", data: {bookmark: $(this).attr('id')} });
+                    if ($(event.target).is('.bookmark-add')){event.stopPropagation();}
+                }
+            }, ".bookmark-add");
+            $(document).on({
+                click: function (event){
+                    $(this).hide(); 
+                    $(this).parent().find('.bookmark-add').show();
+                    $.ajax({ url: "/remove_bookmark", type: "post", data: {bookmark: $(this).attr('id')} });
+                    if ($(event.target).is('.bookmark-remove')){event.stopPropagation();}
+                }
+            }, ".bookmark-remove");
+            ////////////////////////////////// HEADER & SIDBAR /////////////////////////
+            $(".profile-icon-anchor").click(function(){ 
+                if($(this).hasClass("profile-icon")){ 
+                    $("#profile-icon-panel").show(); 
+                    $(this).removeClass("profile-icon");
+                }else{
+                    $("#profile-icon-panel").hide(); 
+                    $(".profile-icon-anchor").addClass("profile-icon");
+                }
+            });
+            $(document).on({
+                click: function (e) { 
+                    if(!$(e.target).hasClass('profile-icon-anchor')) {
+                        var container = $("#profile-icon-panel");
+                        if (!container.is(e.target) && container.has(e.target).length === 0) { 
+                            container.hide(); $(".profile-icon-anchor").addClass("profile-icon"); 
+                        }
+                    }
+                },
+            });
+            $("#menu-toggle").click(function(e) { e.preventDefault(); $("#wrapper").toggleClass("toggled"); });
+            $(".new-notification").delay(200).fadeOut(200).fadeIn(200).delay(200).fadeOut(200).fadeIn(200).delay(200).fadeOut(200).fadeIn(200);
+            $(document).on({
+                click: function (){ $(".icon-header").hide(); $(".icon-header-full").show(); $(".icon-header-full").css({"display": "inline-block"}); }
+            }, ".icon-header");
+            $(document).on({
+                click: function (){ $(".icon-header-full").hide(); $(".icon-header").show(); }
+            }, ".icon-header-full");
+            
+            $(document).on({
+                click: function (){
+                    $.ajax({
+                       url: "/open_career_search_form",
+                       type: "get",
+                       success: function(response) { $('#career-search-form').empty(); $('#career-search-form').append(response); }
+                    });
+                }
+            }, "#open-career-search-form");
+
+            $(document).on({ click: function (){ $('#career-search-form').empty(); }}, "#close-career-search-form");
+
+        $(document).on({
+                click: function (){
+                    var tags = $(".industry-selected").map(function(){ return $.trim($(this).text().replace("/", "")); }).get()
+                    window.location.href = tags.join('+')
+                }
+            }, "#search-careers");
+
+            $(document).on({
+                click: function (){
+                    $(this).parent().parent().parent().parent().find("#industry-input-area").append("<div class='d-table remove-tag industry-selected hoverable' style='margin: 5px; padding-left: 10px; padding-right: 10px; height: 23px; display: inline-block; border-radius: 5px; background-color: #BD1376; letter-spacing: 1px;'><p class='d-table-cell' style='vertical-align: middle; font-size: 11px; text-align: center; text-transform: capitalize;'>" + $(this).attr('id') + "</p></div>")
+                }
+            }, ".industry-type-selection");
+        });
+    </script>
+    <style>
+        {% block style %}{% endblock %}
+        {% block style2 %}{% endblock %}
+        .hoverable:hover { cursor: pointer; }
+        ::selection { background: #BD1376; /* WebKit/Blink Browsers */ }
+        ::-moz-selection { background: #BD1376; /* Gecko Browsers */ }
+        .thin-text { font-family: 'Raleway', sans-serif; }
+        .thick-text { font-family: 'Assistant', sans-serif; }
+        #wrapper { padding-left: 0; }
+        #wrapper.toggled { padding-left: 250px; }
+        #sidebar-wrapper {
+            z-index: 100;
+            position: fixed;
+            left: 250px;
+            width: 0;
+            height: 100%;
+            margin-left: -250px;
+            background: #e6e6e6;
+            display: none;
+        }
+        #wrapper.toggled #sidebar-wrapper { width: 250px; display: initial; }
+        #page-content-wrapper { width: 100%; height: 92%; margin-right: 0; position: absolute; }
+        #wrapper.toggled #page-content-wrapper { margin-right: -250px; }
+        @media(min-width:768px) {
+            #wrapper { padding-left: 250px; }
+            #wrapper.toggled { padding-left: 0; }
+            #sidebar-wrapper { width: 250px; display: initial; }
+            #wrapper.toggled #sidebar-wrapper { width: 0; display: none; }
+            #page-content-wrapper { width: calc(100% - 250px); }
+            #wrapper.toggled #page-content-wrapper { margin-right: 0; width: 100%; }
+        }
+        /* Sidebar Styles */
+        .sidebar-nav { position: absolute; top: 5%; width: 100%; margin: 0; padding: 0; list-style: none; }
+        .sidebar-nav li { text-indent: 20px; line-height: 50px; }
+        .sidebar-nav li a { display: block; text-decoration: none; color: black; }
+        .sidebar-nav li a:hover { text-decoration: none; color: black; background-color: #d8d5d5; }
+        .sidebar-nav li a:active,
+        .sidebar-nav li a:focus { text-decoration: none; }
+        .sidebar-nav > .sidebar-brand { height: 65px; font-size: 18px; line-height: 60px; }
+        .sidebar-nav > .sidebar-brand a { color: #999999; }
+        .sidebar-nav > .sidebar-brand a:hover { color: black; background-color: #d8d5d5; }
+        .collapse.show { height: 60%; }
+        /* Autocomplete */
+        #search_comp:focus{ outline: none; }
+        .autocomplete { position: relative; display: inline-block; }
+        .autocomplete-items { position: absolute; border-bottom: none; border-top: none; z-index: 99; top: 100%; left: 0; right: 0; }
+        .autocomplete-items div { padding: 10px; cursor: pointer; background-color: #e6e6e6;  border: 1px solid #f1f1f1; }
+        .autocomplete-items div:hover { background-color: #767171; }
+        .autocomplete-active { background-color: DodgerBlue !important; color: #f1f1f1; }
+        /* Header Profile */
+        .profile-nav { position: absolute; top: 5%; width: 100%; margin: 0; padding: 0; list-style: none; }
+        .profile-nav li { text-indent: 20px; line-height: 50px; }
+        .profile-nav li a { display: block; text-decoration: none; color: black; position: relative; width: 100%; }
+        .profile-nav li a:hover { text-decoration: none; color: black; background-color: #d8d5d5; }
+        .profile-nav li a:active,
+        .profile-nav li a:focus { text-decoration: none; }
+        .profile-nav > .profile-brand { height: 65px; font-size: 18px; line-height: 60px; }
+        .profile-nav > .profile-brand a { color: black; }
+        .profile-nav > .profile-brand a:hover { color: black; background-color: #d8d5d5; }
+        .alert { background-color: #83FFDB; color: #03695D; }
+        /* Scroll Bar */
+        ::-webkit-scrollbar-track { background-color: #f1f1f1; }
+        ::-webkit-scrollbar { width: 7px; height: 0; background-color: #F5F5F5; }
+        ::-webkit-scrollbar-thumb { border-radius: 10px; -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); background-color: #555; }
+        /* Header Logo */
+        .header-logo-large { height: 43px; display: none; }
+        .header-logo-col { padding-top: 5px; }
+        @media (min-width: 720px) {
+            .header-logo-large { display: initial; }
+            .header-logo-small { display: none; }
+            .header-logo-col { padding-top: 0; }
+        }
+        
+        .article { margin-top: 15px; margin-bottom: 10px; padding: 20px; padding-top: 0; text-decoration: none; color: black;}
+        .article-title { position: absolute; width: 90%; bottom: 10px; left: 10px; background-color: #e6e6e6; padding-top: 10px; padding-bottom: 10px; opacity: 0.9; }
+        .article-title p { white-space: normal; padding: 5px; padding-left: 15px; letter-spacing: 4px; font-size: 12px; text-transform: uppercase; }
+        .see-all-button {height: 30px; font-size: 11px; text-align: center; background-color: #00A08E; border-radius: 50px; color: white; letter-spacing: 2px;}
+        .see-all-button .d-table-cell {vertical-align: middle; text-transform: uppercase;}
+        .service-steps-row {padding: 40px; border-bottom: dotted 1px #767170;}
+    </style>    
+</head>
+<body>
+    <div class="thin-text" id="container" style="position: absolute; height: 100%; width: 100%; background-color: #f1f1f1;">
+        <div class="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            Welcome to Ambikor 1.0. You've just entered as a fake user. Feel free to take a look around.
+        </div>
+        <div class="row no-gutters" style="position: fixed; height: 56px; width: 100%; background-color: #e6e6e6; z-index: 1000;">
+            <div class="col-3">
+                <div class="row no-gutters" style="height:10%;"></div>
+                <div class="row no-gutters">
+                    <div class="col header-logo-col">
+                        <img class="hoverable" id="menu-toggle" src='/static/images/panel.png' style="position: relative; left: 17px; height: 17px;">
+                        <a href="{{ url_for('home.home_page') }}" style="position: relative; left: 30px;">
+                            <img class="header-logo-large" src='/static/images/logo_text.png' style="height: 43px;">
+                            <img class="header-logo-small" src='/static/images/ambit_tab2.png' style="height: 33px;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-7 col-sm-6 col-md-7">
+                <form action="#" method='get' autocomplete="off">
+                    <input type="text" name="search_comp" id="search_comp" class="d-table autocomplete" value="Search" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" style="position: absolute; top: 10px; width: 100%; height: 36px; border: solid 1px #1C1B1B; border-radius: 3px; background-color: #f1f1f1; font-size: 13px; padding-left: 10px; letter-spacing: 1px;">
+                    <div style="height: 36px; width: 50px; position: absolute; right: 0%; top: 10px;">
+                        <img src='/static/images/search.png' style="position: absolute; top: 10px; left: 37%; width: 14px;">
+                        <input class="hoverable" type="submit" style="height: 100%; width: 100%; border: none; opacity: 0;">
+                    </div>
+                </form>
+            </div>
+            <div class="col-2 col-sm-3 col-md-2">
+                <a class="d-none d-sm-block" href="{{ url_for('profile.notifications_page') }}"><img src="/static/images/notification_icon.png" style="position: absolute; right: 80px; top: 17px; width: 20px;"></a>
+                {% if skeleton['user']['profile'] is defined and skeleton['user']['profile']['notifications']['new_notifications'] == 'yes' %}
+                    <div class="new-notification d-none d-sm-block" style="position: absolute; right: 80px; top: 17px; height: 7px; width: 7px; border-radius: 50%; background-color: #BD1376;"></div>
+                {% endif %}
+                <a class="hoverable">
+                    <img class="profile-icon-anchor profile-icon" src='/static/images/more_header_icon.png' style="position: absolute; top: 15px; right: 20px; width: 25px;">
+                </a>
+            </div>
+            <div id="profile-icon-panel" style="position: fixed; width: 250px; height: 225px; right: 15px; top: 50px; background-color: #f1f1f1; box-shadow: 1px 5px 6px black; border: solid 2px #1C1B1B; display: none;">
+                <ul class="profile-nav" style="font-size: 14px; color: black; text-align: left; letter-spacing: 1px;">
+                    <li class="row no-gutters">
+                        <a class="col" href="{{ url_for('profile.profile_page')}}">
+                            <div class="row no-gutters" style="height:100%;">
+                                <div class="col-2"><img src='/static/images/profile_icon.png' style="height: 17px;"></div>
+                                <div class="col-10">Profile</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="row no-gutters">
+                        <a class="col" href="{{ url_for('profile.settings_page')}}">
+                            <div class="row no-gutters" style="height:100%;">
+                                <div class="col-2"><img src='/static/images/settings_icon.png' style="height: 17px;"></div>
+                                <div class="col-10">Settings</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="row no-gutters">
+                        <a class="col" href="{{ url_for('feedback.feedback_page') }}">
+                            <div class="row no-gutters" style="height:100%;">
+                                <div class="col-2"><img src='/static/images/send_icon.png' style="height: 17px;"></div>
+                                <div class="col-10">Send Feedback</div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="row no-gutters" style="border-top: solid 1px #dadada;">
+                        <a class="col" href="{{ url_for('auth.logout') }}">
+                            <div class="row no-gutters" style="height:100%;">
+                                <div class="col-2"><img src='/static/images/logout_icon.png' style="height: 17px;"></div>
+                                <div class="col-10">Log Out</div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="wrapper" style="height: 100%;">
+            <div class="row no-gutters" id="sidebar-wrapper" style="height: 100%;">
+                <div class="col-12" style="padding: 0;">
+                    <div class="row no-gutters" style="margin-top: 56px;">
+                        <div class="col-12">
+                            <ul class="sidebar-nav" style="letter-spacing: 1px;">
+                                <a href="/profile/fake_user" class="row no-gutters" style="height: 125px; width: 100%; margin-bottom: 30px;">
+                                    <div class="col-12" style="padding-bottom: 15px;">
+                                        <img src="{{ skeleton['user']['profile']['header_image']['src'] }}" onerror="this.onerror=null;this.src='../../../static/images/banner.png';" style="width: 100%; height: 100px; object-fit: cover;">
+                                        <img class="profile-icon-anchor profile-icon" src="{{skeleton['user']['profile']['profile_image']['src']}}" onerror="this.onerror=null;this.src='../../../static/images/logo.png';" style="height: 100px; width: 100px; object-fit: cover; text-align: center; position: relative; top: -50px; left: 73px; border-radius: 50%; border: solid 2px #f1f1f1;">
+                                    </div>
+                                </a>
+                                <li class="row no-gutters">
+                                    <a class="col" href="{{ url_for('home.home_page') }}">
+                                        <div class="row no-gutters" style="height:100%;">
+                                            <div class="col-2"><img src='/static/images/home_icon.png' style="height: 17px;"></div>
+                                            <div class="col-10">Home</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="row no-gutters">
+                                    <a class="col" href="{{ url_for('career.career_archive') }}">
+                                        <div class="row no-gutters" style="height:100%;">
+                                            <div class="col-2"><img src='/static/images/crown_icon.png' style="height: 17px; position: relative; right: 2px;"></div>
+                                            <div class="col-10">Find an Expert</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="row no-gutters">
+                                    <a class="col" href="{{ url_for('profile.earnings_page') }}">
+                                        <div class="row no-gutters" style="height:100%;">
+                                            <div class="col-2"><img src='/static/images/prize_money_icon.png' style="height: 17px;"></div>
+                                            <div class="col-10">Your Earnings</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="row no-gutters">
+                                    <a class="col" href="{{ url_for('profile.notifications_page') }}">
+                                        <div class="row no-gutters" style="height:100%;">
+                                            <div class="col-2">
+                                                <img src='/static/images/notification_icon.png' style="height: 17px;">
+                                                {% if skeleton['user']['profile'] is defined and skeleton['user']['profile']['notifications']['new_notifications'] == 'yes' %}
+                                                    <div class="new-notification d-none d-sm-block" style="position: absolute; right: 5px; top: 17px; height: 7px; width: 7px; border-radius: 50%; background-color: #BD1376;"></div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-10">Your Notifications</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="row no-gutters">
+                                    <a class="col" href="{{ url_for('collections.bookmarks_page')}}">
+                                        <div class="row no-gutters" style="height:100%;">
+                                            <div class="col-2"><img src='/static/images/star_icon.png' style="height: 17px;"></div>
+                                            <div class="col-10">Your Bookmarks</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="row no-gutters" style="border-bottom: solid 1px #d8d5d5; border-top: solid 1px #d8d5d5;">
+                                    <div class="col-3"></a><img src="/static/images/linkedin_side.png" style="width: 30%;"></div>
+                                    <div class="col-3"><img src="/static/images/twitter_side.png" style="width: 30%;"></div>
+                                    <div class="col-3"><img src="/static/images/facebook_side.png" style="width: 30%;"></div>
+                                    <div class="col-3"><img src="/static/images/instagram_side.png" style="width: 30%;"></div>
+                                </li>
+                                <li class="row no-gutters">
+                                    <a class="col" href="{{ url_for('profile.settings_page') }}">
+                                        <div class="row no-gutters" style="height:100%;">
+                                            <div class="col-2"><img src='/static/images/settings_icon.png' style="height: 17px;"></div>
+                                            <div class="col-10">Settings</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="row no-gutters feedback-form-sidebar" style="border-bottom: solid 1px #d8d5d5;">
+                                    <a class="col" href="{{ url_for('feedback.feedback_page') }}">
+                                        <div class="row no-gutters" style="height:100%;">
+                                            <div class="col-2"><img src='/static/images/send_icon.png' style="height: 17px;"></div>
+                                            <div class="col-10">Send Feedback</div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters" style="height: 56px;"></div>
+            <div id="page-content-wrapper">
+                <div class="row no-gutters outer-body-row" style="background-color: #f1f1f1; display: inline;">
+                    <div class="col-12 outer-body-col" style="height: 100%; overflow: scroll;">
+                        {% include industry_slider ignore missing %}
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function autocomplete(inp, arr) {
+          var currentFocus;
+          inp.addEventListener("input", function(e) {
+              var a, b, i, val = this.value;
+              closeAllLists();
+              if (!val) { return false; }
+              currentFocus = -1;
+              a = document.createElement("DIV");
+              a.setAttribute("id", this.id + "autocomplete-list");
+              a.setAttribute("class", "autocomplete-items");
+              a.setAttribute("style", "overflow-y: scroll; height: 70vh;");
+              this.parentNode.appendChild(a);
+              for (i = 0; i < arr.length; i++) {
+                if (arr[i]["name"].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                      b = document.createElement("DIV");
+                      b.setAttribute("class", arr[i]["id"]);
+                      b.setAttribute("style", "display: inline-block; width: 100%; text-transform: capitalize;");
+                      b.innerHTML = "<strong>" + arr[i]["name"].substr(0, val.length) + "</strong>";
+                      b.innerHTML += arr[i]["name"].substr(val.length);
+                      b.innerHTML += "<input type='hidden' value='" + arr[i]["name"] + "' class='" + arr[i]["id"] + "'>";
+                      b.addEventListener("click", function(e) {
+                          inp.value = this.getElementsByTagName("input")[0].value;
+                          closeAllLists();
+                          window.location.href = "/career/" + this.className;
+                      });
+                  a.appendChild(b);
+                }
+              }
+          });
+          function closeAllLists(elmnt) {
+            var x = document.getElementsByClassName("autocomplete-items");
+            for (var i = 0; i < x.length; i++) { if (elmnt != x[i] && elmnt != inp) { x[i].parentNode.removeChild(x[i]); } }
+          }
+          document.addEventListener("click", function (e) { closeAllLists(e.target); });
+        }
+        autocomplete(document.getElementsByName("search_comp")[0], {{ skeleton['full_career_list'] | tojson | safe }});
+    </script>
+    {% block endscript %}{% endblock %}
+</body>
+</html>

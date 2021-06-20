@@ -1,0 +1,85 @@
+{% extends career_content %}
+{% block career_panels %}
+<div class="row no-gutters" style="margin-bottom: 20px;">
+    <div class="col-12 col-md-6">
+        {% for career in careers %}
+            {% if loop.index0 % 2 == 0 %}
+                <div class="row no-gutters" style="padding: 30px;">
+                    <a href="/career/{{career['career_id']}}" class="col-12 career-select" style="background-color: #00A08E; color: white; text-decoration: none; border-radius: 5px;">
+                        <div class="row no-gutters" style="padding: 20px; background-color: #02695D; border-radius: 5px;">
+                            <div class="col-10 d-table">
+                                <p class="d-table-cell" style="font-size: 16px; letter-spacing: 2px; text-transform: capitalize;">{{ career['title'] }}
+                                    {% if content is defined and content['notes'] | length > 0 %}
+                                        <br><span style="font-size: 12px;">{{ content['notes'][career['title']] }}</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            {% if skeleton['user_type'] == 'user' %}
+                                <div class="col-2" style="padding-left: 5px;">
+                                    <img src='/static/images/star_icon.png' class="bookmark-add hoverable" id="career-{{career['career_id']}}" style="position: absolute; right: 10px; height: 17px; {%if career['career_id'] in skeleton['user']['bookmarks']['careers']%}display: none;{%endif%}" onclick="event.preventDefault()">
+                                    <img src='/static/images/star_pink_icon.png' class="bookmark-remove hoverable" id="career-{{career['career_id']}}" style="position: absolute; right: 10px; height: 17px; {%if not career['career_id'] in skeleton['user']['bookmarks']['careers']%}display: none;{%endif%}" onclick="event.preventDefault()">
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col-12">
+                                <img src="{{ career['image'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 100%; height: 150px; object-fit: cover;">
+                            </div>
+                        </div>
+                        <div class="row no-gutters" style="padding: 20px; padding-bottom: 0;">
+                            <div class="col-12">
+                                <p id="description" style="width: 100%; padding: 7px; font-size: 12px; text-align: center; letter-spacing: 2px;">{{career['description']}}</p>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col-12" style="width: 100%; padding: 20px; padding-top: 0;">
+                                <iframe width="100%" height="200px;" src="{{career['videos']}}"></iframe>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div class="col-12 col-md-6">
+        {% for career in careers %}
+            {% if loop.index0 % 2 == 1 %}
+                <div class="row no-gutters" style="padding: 30px;">
+                    <a href="/career/{{career['career_id']}}" class="col-12 career-select" style="background-color: #00A08E; color: white; text-decoration: none; border-radius: 5px;">
+                        <div class="row no-gutters" style="padding: 20px; background-color: #02695D; border-radius: 5px;">
+                            <div class="col-10 d-table">
+                                <p class="d-table-cell" style="font-size: 16px; letter-spacing: 2px; text-transform: capitalize;">{{ career['title'] }}
+                                    {% if content is defined and content['notes'] | length > 0 %}
+                                        <br><span style="font-size: 12px;">{{ content['notes'][career['title']] }}</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            {% if skeleton['user_type'] == 'user' %}
+                                <div class="col-2" style="padding-left: 5px;">
+                                    <img src='/static/images/star_icon.png' class="bookmark-add hoverable" id="career-{{career['career_id']}}" style="position: absolute; right: 10px; height: 17px; {%if career['career_id'] in skeleton['user']['bookmarks']['careers']%}display: none;{%endif%}" onclick="event.preventDefault()">
+                                    <img src='/static/images/star_pink_icon.png' class="bookmark-remove hoverable" id="career-{{career['career_id']}}" style="position: absolute; right: 10px; height: 17px; {%if not career['career_id'] in skeleton['user']['bookmarks']['careers']%}display: none;{%endif%}" onclick="event.preventDefault()">
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col-12">
+                                <img src="{{ career['image'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 100%; height: 150px; object-fit: cover;">
+                            </div>
+                        </div>
+                        <div class="row no-gutters" style="padding: 20px; padding-bottom: 0;">
+                            <div class="col-12">
+                                <p id="description" style="padding: 7px; font-size: 12px; text-align: center; letter-spacing: 2px;">{{career['description']}}</p>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col-12" style="width: 100%; padding: 20px; padding-top: 0;">
+                                <iframe width="100%" height="200px;" src="{{career['videos']}}"></iframe>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

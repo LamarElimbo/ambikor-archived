@@ -1,0 +1,70 @@
+{% if status['provider_acceptance'] == "pending" %}
+    <div class="row no-gutters" style="width: 100%; padding: 10px;">
+        <div class="col-12 col-md service-request-form finalize-service-request-form" style="padding: 2%;">
+            <div class="row no-gutters" style="width: 100%; padding-top: 10px; padding-bottom: 10px; margin-bottom: 30px;">
+                <div class="col">
+                    <div class="d-table" style="width: 100%; height: 100%; font-size: 18px; font-family: 'Raleway', sans-serif; letter-spacing: 2px; padding-left: 3%;">
+                        <p class="d-table-cell" style="vertical-align: middle; color: white; text-align: center;">Select an end date for this service request.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col">
+                    <input id="datetimepicker" style="display: none;">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col d-table approve-service-request hoverable" style="padding: 5px; width: 100%; font-size: 14px; text-align: center; background-color: #00A08E; border-radius: 3px; font-family: 'Raleway', sans-serif; color: white; letter-spacing: 2px; margin-top: 50px;">
+                    <div class="d-table-cell" style="vertical-align: middle; color: white;">Approve Service Request</div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(function () { $('#datetimepicker').datetimepicker({ inline: true, format: 'DD/MM/YYYY' }); });
+            </script>
+        </div>
+    </div>
+{% elif status['provider_acceptance'] == "accepted" %}
+    <div class="col-12 col-md service-request-form update-service-request-deadline-form" style="padding: 2%;">
+        <div class="row no-gutters" style="width: 100%; padding-top: 10px; padding-bottom: 10px; margin-bottom: 30px;">
+            <div class="col">
+                <div class="d-table" style="width: 100%; height: 100%; font-size: 18px; font-family: 'Raleway', sans-serif; letter-spacing: 2px; padding-left: 3%;">
+                    <p class="d-table-cell" style="vertical-align: middle; color: white; text-align: center;">Select an end date for this service request.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col">
+                <input id="datetimepicker2" style="display: none;">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col d-table update-deadline-request hoverable" style="padding: 5px; width: 100%; font-size: 14px; text-align: center; background-color: #00A08E; border-radius: 3px; font-family: 'Raleway', sans-serif; color: white; letter-spacing: 2px; margin-top: 50px;">
+                <div class="d-table-cell" style="vertical-align: middle; color: white;">Update Service Request Deadline</div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function () { $('#datetimepicker2').datetimepicker({ inline: true, format: 'DD/MM/YYYY' }); });
+        </script>
+    </div>
+{% endif %}
+<div class="row no-gutters approval-successful" style="height: 100%; display: none;">
+    <div class="col-12" style="padding: 20px;">
+        <div class="row" style="position: absolute; width: 100%;">
+            <div class="col-2"></div>
+            <div class="col-8" style="background-color: #014a40; height: 100%; width: 100%; border: 5px solid #cdcdcd; border-radius: 5px; text-align: center; padding: 10px; box-shadow: 5px 5px 15px black;">
+                <div style="width: 100%; text-align: right;"><img src="../../static/images/close_icon.png" class="hoverable service-request-chat-button" style="width: 20px;"></div>
+                <img src="../../static/images/grey_check_icon.png" style="width: 70px;">
+                <div class="d-table thick text" style="width: 100%; font-size: 20px; letter-spacing: 1px; padding: 30px;">
+                    <p class="d-table-cell" style="vertical-align: middle; color: white;">
+                        {% if status['provider_acceptance'] == "pending" %}
+                            You've successfully confirmed this service request! You'll be notified when a payment has been processed.
+                        {% else %}
+                            You'll be notified when there is a response for your deadline change request.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+</div>

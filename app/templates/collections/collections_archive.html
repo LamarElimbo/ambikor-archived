@@ -1,0 +1,66 @@
+{% extends skeleton['template'] %}
+{% block title %}Ambikor - Collections{% endblock %}
+{% block style %}
+.form-control { 
+    width: 100%; 
+    background-color: #f1f1f1; 
+    border: solid 1px #BD1376; 
+    padding: 7px; 
+    font-size: 14px; 
+    letter-spacing: 2px; 
+}
+.industry-type-submit {
+    height: 36px;
+    width: 100%;
+    background-color: #BD1376;
+    border: none;
+    font-family: 'Raleway', sans-serif;
+    color: white;
+    letter-spacing: 4px; 
+    font-size: 20px;
+}
+{% endblock %}
+{% block content %}
+<div class="row no-gutters outer-body-row" style="background-color: #f1f1f1;"> 
+    <div class="col outer-body-col">
+        <div class="row no-gutters" style="height: 100%; border-top: dashed 1px #4C4A4A;">
+           <div class="col" id="collections-spot">
+                <div class="row no-gutters total-row" style="padding: 2%;">
+                    <div class="col">
+                        <div class="d-table" style="width: 100%;">
+                            <p class="d-table-cell" style="font-size: 14px; text-align: center; letter-spacing: 2px;">Total Collections: {{ collections | length }}</p>
+                        </div>
+                    </div>
+                </div>
+               <div class="row no-gutters" style="padding-left: 20px; padding-right: 20px;">
+                   {% if collections | length > 0 %}
+                       {% for collection in collections %}
+                        <a href="/article/{{ collection['url'] }}" class="col-12 col-md-6 col-xl-4 article">
+                            <div class="row no-gutters" style="height: 250px;">
+                                <div class="col article-img" style="padding: 10px;">
+                                    <img src="{{ collection['image'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 100%; height: 250px; object-fit: cover;">
+                                </div>
+                            </div>
+                            <div class="row no-gutters article-title">
+                                <div class="col d-table">
+                                    <p class="d-table-cell" style="color: black; padding-right: 25px;">{{ collection['title'] }}</p>
+                                    {% if skeleton['user_type'] == 'user' %}
+                                        <img src='/static/images/star_icon.png' class="bookmark-add hoverable" id="collection-{{collection['url']}}" style="position: absolute; right: 5px; height: 17px; {%if collection['url'] in skeleton['user']['bookmarks']['collections']%}display: none;{%endif%}"  onclick="event.preventDefault()">
+                                        <img src='/static/images/star_pink_icon.png' class="bookmark-remove hoverable" id="collection-{{collection['url']}}" style="position: absolute; right: 5px; height: 17px; {%if not collection['url'] in skeleton['user']['bookmarks']['collections']%}display: none;{%endif%}"  onclick="event.preventDefault()">
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
+                       {% endfor %}
+                </div>
+                   <div class="row no-gutters" style="height: 15px;"></div>
+                {% else %}
+                    <div class="d-table" style="width: 100%;">
+                        <p class="d-table-cell" style="text-align: center; letter-spacing: 2px;">Couldn't find any collections under this category yet, but more are being added frequently, so stay tuned!</p>
+                    </div>
+                {% endif %}
+           </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

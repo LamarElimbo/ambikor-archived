@@ -1,0 +1,87 @@
+{% if service['users']['service_requester'] == user['user_id'] %}
+    <div class="row no-gutters" style="width: 100%; padding: 10px;">
+        <div class="col-12" style="height: 100%; width: 100%; text-align: center;">
+            <div class="row no-gutters">
+                <div class="col-12 d-table" style="width: 100%; height: 100%; text-align: center; font-size: 24px; letter-spacing: 1px; padding-bottom: 10px;">
+                    <p class="d-table-cell selected-service-title" style="vertical-align: middle;">{{ service['service']['title'] }}</p>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-12 d-table" style="width: 100%; height: 100%; text-align: center; font-size: 18px; letter-spacing: 1px;">
+                    <p class="d-table-cell selected-service-cost" style="vertical-align: middle;">${{ service['service']['cost'] }}</p>
+                </div>
+            </div>
+            <div class="row no-gutters" style="margin-bottom: 40px;">
+                <div class="col-12 d-table" style="width: 100%; height: 100%; text-align: center; font-size: 14px; letter-spacing: 1px; padding: 20px;">
+                    <p class="d-table-cell selected-service-description" style="vertical-align: middle;">{{ service['service']['description'] }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div style="display: none;">
+        <p class="selected-service-title old-service-title">{{ service['service']['title'] }}</p>
+        <p class="selected-service-cost old-service-cost">{{ service['service']['cost'] }}</p>
+        <p class="selected-service-description old-service-description">{{ service['service']['description'] }}</p>
+    </div>
+    <div class="row no-gutters edit-service-request-form" style="width: 100%; margin-bottom: 10px;">
+         <div class="col-12 form" style="width: 100%; padding: 30px;">
+             <div class="row no-gutters" style="padding: 20px;">
+                <div class="col-12 d-table" style="width: 100%; height: 100%; font-size: 18px; letter-spacing: 1px;">
+                    <p class="d-table-cell" style="vertical-align: middle; text-align: center;">Edit This Service Request</p>
+                </div>
+            </div>
+             <div class="row no-gutters service-form input-group col-xs-3" style="margin-bottom: 15px;"> 
+                <div class="col-12">
+                    <div class="row no-gutters">
+                        <div class="col-12 col-md-6 d-table" style="height: 100%;">
+                            <p class="d-table-cell" style="padding-left: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px;">Service</p>
+                        </div>
+                        <div class="col-12 col-md-2"></div>
+                        <div class="col-12 col-md-3 d-table" style="height: 100%;">
+                            <p class="d-table-cell" style="padding-left: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px;">Cost (min. $1)</p>
+                        </div>
+                    </div>
+                     <div class="row no-gutters" style="margin-bottom: 10px;">
+                         <input class="col-12 col-md-6 input-field selected-service-title new-service-title" type="text" placeholder="Service Title" value="{{ service['service']['title'] }}" style="padding-left: 7px; background-color: #767170; border: none; letter-spacing: 1px;">
+                         <div class="col-12 col-md-1"></div>
+                         <div class="col-1" style="text-align: right; padding-right: 10px; font-size: 20px;">$</div>
+                         <div class="col-12 col-md-3">
+                             <input class="input-field selected-service-cost new-service-cost" type="number" placeholder="20.00" value="{{ service['service']['cost'] }}" style="padding-left: 7px; background-color: #767170; border: none; letter-spacing: 1px;">
+                         </div>
+                     </div>
+                    <div class="row no-gutters">
+                        <div class="col-12 d-table" style="height: 100%;">
+                            <p class="d-table-cell" style="padding-left: 7px; padding-top: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px;">Service Description</p>
+                        </div>
+                    </div>
+                     <div class="row no-gutters" style="margin-bottom: 10px;">
+                         <textarea class="col-12 input-field form-control selected-service-description new-service-description" type="text" style="height: 200px; font-size: 14px; padding-left: 7px; background-color: #767170; border: none; letter-spacing: 1px;">{{ service['service']['description'] }}</textarea>
+                     </div>
+                    <div class="row no-gutters">
+                        <div class="col-12 hoverable edit-service-request" style="background-color: #00A08E; padding: 20px;">
+                            <div class="d-table" style="width: 100%; height: 100%; font-size: 16px; text-align: center; letter-spacing: 2px;">
+                                <p class="d-table-cell" style="vertical-align: middle;">Edit This Service Request</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+         </div>
+     </div>
+    <div class="row no-gutters edit-successful" style="height: 100%; display: none;">
+        <div class="col-12" style="padding: 20px;">
+            <div class="row" style="position: absolute; width: 100%;">
+                <div class="col-2"></div>
+                <div class="col-8" style="background-color: #014a40; height: 100%; width: 100%; border: 1px solid #cdcdcd; border-radius: 5px; text-align: center; padding: 10px; box-shadow: 5px 5px 15px black;">
+                    <div style="width: 100%; text-align: right;"><img src="../../static/images/close_icon.png" class="hoverable service-request-chat-button" style="width: 20px;"></div>
+                    <img src="../../static/images/grey_check_icon.png" style="width: 70px;">
+                    <div class="d-table thick text" style="width: 100%; font-size: 20px; letter-spacing: 1px; padding: 30px;">
+                        <p class="d-table-cell" style="vertical-align: middle; color: white;">You've successfully edited this service.</p>
+                    </div>
+                </div>
+                <div class="col-2"></div>
+            </div>
+        </div>
+    </div>
+{% endif %}

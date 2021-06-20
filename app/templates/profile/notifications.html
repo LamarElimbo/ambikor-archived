@@ -1,0 +1,540 @@
+{% extends skeleton['template'] %}
+{% block title %}Ambikor - Notifications{% endblock %}
+{% block startscript %}
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/notifications_archive",
+                type: "post",
+                success: function(response) { $('.notification-message-area').empty(); $('.notification-message-area').append(response); }
+             });
+        }
+    }, ".notifications-archive");
+    
+    $(document).on({ click: function (){ $('.message-col').hide(); } }, ".hide-message-area");
+
+    $(document).on({
+        click: function (){
+            $('.notification-message').css({'border-right': 'none'});
+            $(this).css({'border-right': 'solid 3px #0da08d'});
+            $('.message-col').show();
+            $('.service-request-header').show();
+            $('.service-message-id').attr('id', $(this).attr('id'));
+            $.ajax({
+                url: "/get_message",
+                type: "post",
+                data: { message_id: $(this).attr('id') },
+                success: function(response) { $('.message-area').empty(); $('.message-area').append(response); }
+             });
+        }
+    }, ".notification-message");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/send_message",
+                type: "post",
+                data: { message_id: $(".service-message-id").attr('id'), message: $('#new-message').val() },
+                success: function(response) { 
+                    $('.messages').append(
+                        "<div class='row no-gutters' style='margin-top: 10px;'><div class='col-1'></div><div class='col-11' style='padding-right: 20px;'><p class='sender-speech-bubble'>" + $('#new-message').val() + "</p></div>"
+                    );
+                    $('#new-message').val("");
+                }
+             });
+        }
+    }, ".send-message");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+               url: "/edit_service_request",
+               type: "post",
+               data: {
+                   message_id: $(".service-message-id").attr('id'),
+                   old_service_title: $(".old-service-title").text(),
+                   old_service_cost: $(".old-service-cost").text(),
+                   old_service_description: $(".old-service-description").text(),
+                   new_service_title: $(".new-service-title").val(),
+                   new_service_cost: $(".new-service-cost").val(),
+                   new_service_description: $(".new-service-description").val()
+               },
+                success: function(response) { $('.edit-successful').show(); $('.edit-service-request-form').hide(); }
+            });
+        }
+    }, ".edit-service-request");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/approve_service_request",
+                type: "post",
+                data: { service_request: $(".service-message-id").attr('id'), date: $("#datetimepicker").val() },
+                success: function(response) { $('.approval-successful').show(); $('.service-request-form').hide(); }
+             });
+        }
+    }, ".approve-service-request");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/complete_service_request",
+                type: "post",
+                data: { service_request: $(".service-message-id").attr('id') },
+                success: function(response) { $('.completion-successful').show(); $('.mark-service-as-complete-form').hide();
+                }
+             });
+        }
+    }, ".complete-service-request");
+
+    $(document).on({
+        click: function (){
+            var message_id = $(".service-message-id").attr('id');
+            $.ajax({
+                url: "/complete_transaction",
+                type: "post",
+                data: { service_request: message_id },
+                success: function(response) { 
+                    $.ajax({
+                        url: "/get_message",
+                        type: "post",
+                        data: { message_id: message_id },
+                        success: function(response) { $('.message-area').empty(); $('.message-area').append(response); }
+                    });
+                }
+             });
+        }
+    }, ".confirm-service-completion");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/approve_service_request",
+                type: "post",
+                data: { service_request: $(".service-message-id").attr('id'), date: $("#datetimepicker2").val() },
+                success: function(response) { $('.approval-successful').show(); $('.service-request-form').hide(); }
+             });
+        }
+    }, ".update-deadline-request");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/reject_service_request",
+                type: "post",
+                data: { service_request: $(".service-message-id").attr('id') },
+                success: function(response) { $('.rejection-successful').show(); $('.accept-service-form').hide(); }
+             });
+        }
+    }, ".reject-service-request");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/cancel_service_request",
+                type: "post",
+                data: { service_request: $(".service-message-id").attr('id') },
+                success: function(response) { $('.cancellation-successful').show(); $('.cancel-service-request-form').hide(); }
+             });
+        }
+    }, ".cancel-service-request");
+
+    $(document).on({
+        click: function (){
+            var message_id = $(".service-message-id").attr('id');
+            $.ajax({
+                url: "/date_change_response",
+                type: "post",
+                data: { response: 'reject', service_request: message_id },
+                success: function(response) { 
+                    $.ajax({
+                        url: "/get_message",
+                        type: "post",
+                        data: { message_id: message_id },
+                        success: function(response) { $('.message-area').empty(); $('.message-area').append(response); }
+                    });
+                }
+             });
+        }
+    }, ".reject-deadline-extension");
+
+    $(document).on({
+        click: function (){
+            var message_id = $(".service-message-id").attr('id');
+            $.ajax({
+                url: "/date_change_response",
+                type: "post",
+                data: { response: 'accept', service_request: message_id, date: $.trim($(".deadline-extension-request-message").text().split(': ')[1]) },
+                success: function(response) { 
+                    $.ajax({
+                        url: "/get_message",
+                        type: "post",
+                        data: { message_id: message_id },
+                        success: function(response) { $('.message-area').empty(); $('.message-area').append(response); }
+                    });
+                }
+             });
+        }
+    }, ".accept-deadline-extension");
+
+    $(document).on({
+        click: function (){
+            $('.messages-cover').show();
+            $('.service-request-form').hide();
+            $('.service-request-response-form').show();
+        }
+    }, ".open-service-request-response-form");
+
+    $(document).on({
+        click: function (){
+            $('.messages-cover').show();
+            $('.service-request-form').hide();
+            $('.finalize-service-request-form').show();
+        }
+    }, ".open-service-request-calendar");
+
+    $(document).on({
+        click: function (){
+            $('.messages-cover').show();
+            $('.service-request-form').hide();
+            $('.service-request-update-form').show();
+        }
+    }, ".open-service-request-update-form");
+
+    $(document).on({
+        click: function (){
+            $('.messages-cover').show();
+            $('.service-request-form').hide();
+            $('.cancel-service-request-form').show();
+        }
+    }, ".open-cancel-service-request-form");
+
+    $(document).on({
+        click: function (){ 
+            $(this).find(".pink-star").addClass('clicked-star'); 
+            $(this).siblings(".review-col").find(".clear-star").show();
+            $(this).siblings(".review-col").find(".pink-star").hide(); 
+            $(this).find(".clear-star").hide();
+            $(this).prevAll(".review-col").find(".clear-star").hide();
+            $(this).find(".pink-star").show(); 
+            $(this).prevAll(".review-col").find(".pink-star").show(); 
+        }
+    }, ".review-col");
+
+    $(document).on({
+        click: function (){ 
+            $.ajax({
+                url: "/review_service_request",
+                type: "post",
+                data: { rating: $(this).parent().parent().find('.clicked-star').attr('id'), message: $("#review-message").val(), message_id: $(".service-message-id").attr('id') },
+                success: function(response) { $('.review-successful').show(); $('.review-service-request-form').hide(); }
+            });
+        }
+    }, ".submit-review");
+
+    $(document).on({
+        click: function (){ 
+            $.ajax({
+                url: "/get_message",
+                type: "post",
+                data: { message_id: $(".service-message-id").attr('id') },
+                success: function(response) { $('.message-area').empty(); $('.message-area').append(response); }
+             });
+        }
+    }, ".service-request-chat-button");
+
+    $(document).on({
+        click: function (){ 
+            $.ajax({
+                url: "/service_request_info",
+                type: "post",
+                data: { message_id: $(".service-message-id").attr('id') },
+                success: function(response) { 
+                    $('.message-area').empty(); 
+                    $('.message-area').append(response);
+                }
+            });
+        }
+    }, ".service-request-info-button");
+
+    $(document).on({
+        click: function (){ 
+            $.ajax({
+                url: "/service_request_status",
+                type: "post",
+                data: { message_id: $(".service-message-id").attr('id') },
+                success: function(response) { 
+                    $('.message-area').empty(); 
+                    $('.message-area').append(response);
+                }
+            });
+        }
+    }, ".service-request-status-button");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/service_request_update",
+                type: "post",
+                data: { message_id: $(".service-message-id").attr('id') },
+                success: function(response) { 
+                    $('.message-area').empty(); 
+                    $('.message-area').append(response);
+                }
+            });
+        }
+    }, ".service-request-update-button");
+
+    $(document).on({
+        click: function (){ 
+            $.ajax({
+                url: "/cancel_service_form",
+                type: "get",
+                success: function(response) { $('.message-area').empty(); $('.message-area').append(response); }
+            });
+        }
+    }, ".open-cancel-service-form");
+
+    $(document).on({
+        click: function (){ 
+            $.ajax({
+                url: "/accept_service_form",
+                type: "get",
+                success: function(response) { $('.message-area').empty(); $('.message-area').append(response); }
+            });
+        }
+    }, ".open-accept-service-form");
+
+    $(document).on({
+        click: function (){ 
+            $.ajax({
+                url: "/review_service_form",
+                type: "get",
+                success: function(response) { $('.message-area').empty(); $('.message-area').append(response); }
+            });
+        }
+    }, ".open-review-service-form");
+
+    $(document).on({
+        click: function (){ 
+            $.ajax({
+                url: "/pay_for_service_form",
+                type: "post",
+                data: { message_id: $(".service-message-id").attr('id') },
+                success: function(response) { $('.message-area').empty(); $('.message-area').append(response); }
+            });
+        }
+    }, ".open-pay-for-service-form");
+
+    $(document).on({
+        click: function (){ 
+            $.ajax({
+                url: "/mark_service_as_complete_form",
+                type: "get",
+                success: function(response) { $('.message-area').empty(); $('.message-area').append(response); }
+            });
+        }
+    }, ".open-mark-service-as-complete-form");
+
+    $(document).on({
+        click: function (){ 
+            $.ajax({
+                url: "/service_deadline_form",
+                type: "post",
+                data: { message_id: $(".service-message-id").attr('id') },
+                success: function(response) { $('.message-area').empty(); $('.message-area').append(response); }
+            });
+        }
+    }, ".open-service-deadline-form");
+
+    $(document).on({
+        click: function (){
+            $('.messages-cover').show();
+            $('.service-request-form').hide();
+            $('.update-service-request-deadline-form').show();
+        }
+    }, ".open-service-request-deadline-form");
+
+    $(document).on({
+        click: function (){
+            $('.notifications-col').removeClass("col-2");
+            $('.notifications-col').addClass("col-12");
+            $('.messages-col').removeClass("col-10");
+            $('.messages-col').addClass("d-none");
+            $('.compress-notifications').show();
+            $('.expand-notifications').hide();
+            $('.notification-message-img').removeClass("col-12");
+            $('.notification-message-img').addClass("col-2");
+            $('.notification-message-desc').removeClass("d-none d-md-block");
+            $('.notification-message-desc').addClass("col-10");
+            $('.notification-title').removeClass("d-none d-md-block");
+            $('.notification-title').addClass("col-8");
+            $('.notification-archive').removeClass("col-12");
+            $('.notification-archive').addClass("col-4 ");
+        }
+    }, ".expand-notifications");
+
+    $(document).on({
+        click: function (){
+            $('.notifications-col').addClass("col-2");
+            $('.notifications-col').removeClass("col-12");
+            $('.messages-col').addClass("col-10");
+            $('.messages-col').removeClass("d-none");
+            $('.expand-notifications').show();
+            $('.compress-notifications').hide();
+            $('.notification-message-img').addClass("col-12");
+            $('.notification-message-img').removeClass("col-2");
+            $('.notification-message-desc').addClass("d-none d-md-block");
+            $('.notification-message-desc').removeClass("col-10");
+            $('.notification-title').addClass("d-none d-md-block");
+            $('.notification-title').removeClass("col-8");
+            $('.notification-archive').addClass("col-12");
+            $('.notification-archive').removeClass("col-4 ");
+        }
+    }, ".compress-notifications");
+
+    $(document).on({
+        click: function (){
+            $('.notifications-col').addClass("col-2");
+            $('.notifications-col').removeClass("col-12");
+            $('.messages-col').addClass("col-10");
+            $('.messages-col').removeClass("d-none");
+            $('.expand-notifications').show();
+            $('.compress-notifications').hide();
+            $('.notification-message-img').addClass("col-12");
+            $('.notification-message-img').removeClass("col-2");
+            $('.notification-message-desc').addClass("d-none d-md-block");
+            $('.notification-message-desc').removeClass("col-10");
+            $('.notification-title').addClass("d-none d-md-block");
+            $('.notification-title').removeClass("col-8");
+            $('.notification-archive').addClass("col-12");
+            $('.notification-archive').removeClass("col-4 ");
+        }
+    }, ".compress-on-notification-click");
+
+    $(document).on({ 
+        click: function (){ 
+            $('.message-area').empty();
+            var message_id = $(this).attr('id');
+            $('.messages-cover').hide(); 
+            $('.service-request-form').hide(); 
+            $.ajax({
+                url: "/get_message",
+                type: "post",
+                data: { message_id: message_id },
+                success: function(response) { 
+                    $('.messages-cover').hide(); 
+                    $('.service-request-form').hide(); 
+                    $('.message-area').append(response); 
+                }
+            });
+        } 
+    }, ".hide-messages-cover");
+{% endblock %}
+{% block style %}
+.hover-shade:hover { text-decoration: none; color: black; background-color: #d8d5d5; }
+.sender-speech-bubble { position: relative; padding: 10px; letter-spacing: 1px; background: #ffb3e1; border-radius: .4em; }
+.sender-speech-bubble:after {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 50%;
+	width: 0;
+	height: 10;
+	border: 20px solid transparent;
+	border-left-color: #ffb3e1;
+	border-right: 0;
+	border-bottom: 0;
+	margin-top: -10px;
+	margin-right: -20px;
+}
+.speech-bubble { position: relative; padding: 10px; letter-spacing: 1px; background: #8ceadf; border-radius: .4em; }
+.speech-bubble:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	width: 0;
+	height: 0;
+	border: 20px solid transparent;
+	border-right-color: #8ceadf;
+	border-left: 0;
+	border-bottom: 0;
+	margin-top: -10px;
+	margin-left: -20px;
+}
+.service-request-header-tab:hover { text-decoration: none; color: black; background-color: #d8d5d5; }
+.bootstrap-datetimepicker-widget table td.active, .bootstrap-datetimepicker-widget table td.active:hover {background-color: #0da08d;}
+{% endblock %}
+{% block content %}
+<div class="row no-gutters" style="height: 100%;">
+    <div class="col-2 col-md-5 notifications-col" style="height: 100%; padding-left: 7px; border-right: solid 1px #4C4A4A; overflow: scroll;">
+        <div class="row no-gutters" style="border-bottom: solid 1px #4C4A4A;">
+            <div class="d-md-none col-12 expand-notifications hoverable" style="height: 60px; border-bottom: solid 1px #4C4A4A;">
+                <div class="d-table" style="width: 100%;">
+                    <div class="d-table-cell" style="height: 60px; vertical-align: middle; text-align: center;"><img src="/static/images/arrow_right_bare.png" style="width: 15px;"></div>
+                </div>
+            </div>
+            <div class="d-md-none col-12 compress-notifications hoverable" style="height: 60px; border-bottom: solid 1px #4C4A4A; display: none;">
+                <div class="d-table" style="width: 100%;">
+                    <div class="d-table-cell" style="height: 60px; vertical-align: middle; text-align: center;"><img src="/static/images/close_icon.png" style="width: 15px;"></div>
+                </div>
+            </div>
+            <div class="d-none d-md-block col-md-8 notification-title" style="height: 60px; padding-left: 10px; border-right: solid 1px #4C4A4A;">
+                <div class="d-table" style="width: 100%;">
+                    <p class="d-table-cell" style="height: 60px; vertical-align: middle; font-size: 14px; letter-spacing: 2px;">Notifications</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 notification-archive hover-shade notifications-archive hoverable" style="height: 60px;">
+                <div class="d-table" style="width: 100%;">
+                    <div class="d-table-cell" style="height: 60px; vertical-align: middle; text-align: center;"><img src="/static/images/archive_icon.png" style="width: 25px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row no-gutters notification-message-area" style="height: 89%;">
+            <div class="col-12" style="height: 100%;">
+                {% if skeleton['user']['profile']['notifications'] is defined %}
+                    {% for notification in skeleton['user']['profile']['notifications']['notifications_list'] %}
+                        {% if notification['status']['current_status'] not in ['rejected', 'cancelled', 'completion_confirmed', 'payout_processed', 'reviewed'] or notification['read_status'] == 'unread' %}
+                            <a href="#" class="row no-gutters notification-message hover-shade compress-on-notification-click" id="{{ notification['messages_id'] }}" style="padding: 10px; color: black; border-bottom: solid 1px #4C4A4A; line-height: 1; text-decoration: none;">
+                                <div class="col-12 col-md-2 notification-message-img" style="text-align: center;">
+                                    <img src="{{ notification['user']['profile_image'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 37px; height: 37px; object-fit: cover; border-radius: 50%;">
+                                </div>
+                                <div class="d-none d-md-block col-md-10 notification-message-desc" style="letter-spacing: 2px; padding-left: 10px; font-size: 12px; color: #767171;">
+                                    {% if notification['user']['profile'] is defined %}<p style="font-size: 16px; color: #767171;">@{{ notification['user']['profile']['username'] }}</p>{% endif %}
+                                    <p>{{ notification['service'] }}</p>
+                                    <p>{{ notification['status']['current_status'] }}</p>
+                                    <p>{{ notification['date_time_last_message'] }}</p>
+                                </div>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-10 col-md-7 message-col" style="height: 100%; background-color: #f1f1f1;">
+        <div class="row no-gutters" style="height: 92%;">
+            <div class="col service-message-id" style="height: 100%">
+                <div class="row no-gutters service-request-header" style="background-color: #f1f1f1; border-bottom: solid 1px #616161; text-align: center; letter-spacing: 1px; display: none;">
+                    <div class="d-none d-md-block col-md-3 service-request-header-tab service-request-chat-button hoverable" style="padding: 10px; border-right: solid 1px #616161;">Chat</div>
+                    <div class="d-none d-md-block col-md-3 service-request-header-tab service-request-info-button hoverable" style="padding: 10px; border-right: solid 1px #616161;">Service</div>
+                    <div class="d-none d-md-block col-md-3 service-request-header-tab service-request-status-button hoverable" style="padding: 10px; border-right: solid 1px #616161;">Status</div>
+                    <div class="d-none d-md-block col-md-3 service-request-header-tab service-request-update-button hoverable" style="padding: 10px;">Update</div>
+                    <div class="col-3 d-md-none service-request-header-tab service-request-chat-button hoverable" style="padding: 10px; border-right: solid 1px #616161;"><img src='/static/images/advice_icon.png' style="height: 17px;"></div>
+                    <div class="col-3 d-md-none service-request-header-tab service-request-info-button hoverable" style="padding: 10px; border-right: solid 1px #616161;"><img src='/static/images/info_icon.png' style="height: 17px;"></div>
+                    <div class="col-3 d-md-none service-request-header-tab service-request-status-button hoverable" style="padding: 10px; border-right: solid 1px #616161;"><img src='/static/images/check_icon.png' style="height: 17px;"></div>
+                    <div class="col-3 d-md-none service-request-header-tab service-request-update-button hoverable" style="padding: 10px;"><img src='/static/images/upgrade_icon.png' style="height: 17px;"></div>
+                </div>
+                <div class="row no-gutters" style="height: 100%">
+                    <div class="col-12 message-area">
+                        <div class="d-table" style="height: 100%; width: 100%; text-align: center;">
+                            <p class="d-table-cell" style="font-size: 14px; vertical-align: middle; letter-spacing: 5px;">You don't have a message selected</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

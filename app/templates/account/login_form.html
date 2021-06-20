@@ -1,0 +1,45 @@
+<div style="position: fixed; width: 80%; padding: 10px; padding-bottom: 20px; left: 10%; top: 100px; background-color: rgb(38, 38, 38); box-shadow: black 1px 5px 6px; border: 1px solid rgb(14, 160, 141);">
+    <div class="row no-gutters" style="margin-bottom: 20px;">
+        <div class="col">
+            <div class="d-table" style="padding-left: 5px; width: 90%;">
+                <p class="d-table-cell login-button-anchor hoverable" style="vertical-align: middle; font-size: 18px; color: white; letter-spacing: 2px;">Login Form</p>
+            </div>
+        </div>
+        <div class="col">
+            <img src='/static/images/close_icon.png' class="hoverable collapse-login-form" style="position: absolute; right: 0; top: 0; width: 20px;">
+        </div>
+    </div>
+    <form action="{{ url_for('auth.user_login') }}" method='post' class="row no-gutters">
+        <div class="col">
+            <div class="row no-gutters" style="margin-bottom: 20px;">
+                <div class="col">
+                    {{ skeleton.login_form.login_email(style="position: relative; top: 15px; left: 5%; width: 90%; height: 50px; border: 1px solid #BD1376; border-radius: 5px; background-color: #f1f1f1; color: white; font-size: 14px; padding-left: 3%;", placeholder="Type your email") }}
+                </div>
+            </div>
+            <div class="row no-gutters" style="margin-bottom: 20px;">
+                <div class="col">
+                    {{ skeleton.login_form.login_password(style="position: relative; top: 15px; left: 5%; width: 90%; height: 50px; border: 1px solid #BD1376; border-radius: 5px; background-color: #f1f1f1; color: white; font-size: 14px; padding-left: 3%;", placeholder="Type your password") }}
+                    {{ skeleton.login_form.hidden_tag() }}
+                </div>
+            </div>
+            <div class="row no-gutters" style="margin-top: 15px; margin-bottom: 30px; padding-right: 15px;">
+                <div class="col">
+                    <div class="d-table" style="height: 100%; position: absolute; right: 10px;">
+                        <a href="{{ url_for('auth.reset_password') }}" class="d-table-cell" style="vertical-align: middle; font-size: 14px; color: #BD1376; text-align: right; letter-spacing: 1px;">Forgot your password</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters" style="margin-bottom: 30px;">
+                <div class="col">
+                    {{ skeleton.login_form.login_submit(class="hoverable", style="position: relative; top: 15px; left: 5%; width: 90%; height: 60px; border: none; border-radius: 3px; background-color: #BD1376; font-size: 14px; color: white; letter-spacing: 2px; text-align: center;", value="LOG IN") }}
+                </div>
+            </div>
+            <div class="row no-gutters" style="height: 20px; margin-bottom: 30px; border-bottom: dashed 1px #4C4A4A;"></div>
+            <div class="row no-gutters" style="margin-bottom: 20px;">
+                <div class="col d-table">
+                    <a href="{{ url_for('home.home_page') }}" class="d-table-cell" style="vertical-align: middle; font-size: 16px; color: white; letter-spacing: 2px; text-align: center;">Don't have an account yet? Click here to register.</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

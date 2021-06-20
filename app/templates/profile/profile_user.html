@@ -1,0 +1,431 @@
+{% extends skeleton['template'] %}
+{% block title %}{{user['profile']['name']}} (@{{user['profile']['username']}}){% endblock %}
+{% block startscript %}
+    $(document).on({
+        click: function (){
+            var send_button_parent = $(this).parent().parent().parent()
+            $.ajax({
+                url: "/create_service_request",
+                type: "post",
+                data: {
+                    service: $(this).attr("id"),
+                    message: $(this).parent().find("#service-request-message").val()
+                },
+                success: function(response) {
+                    send_button_parent.children('.service-request-form').hide();
+                    send_button_parent.children('.service-request-sent').show();
+                }
+             });
+        }
+    }, ".send-service-request");
+
+    $(document).on({ 
+        click: function (){ 
+            var service_expand = "." + $(this).attr('id');
+            $(service_expand).toggle()
+            $(this).find('.collapse-service').toggle()
+        } 
+    }, ".service-listing");
+
+    $(document).on({ click: function (){ $(".service-background-faded").hide();$(".service-expanded").hide();} }, ".collapse-service");
+    
+    $(document).on({ click: function (){ 
+        $(".service-background-faded").show();
+        $(".service-expanded").show();
+        $(".selected-service-title").text($(this).parent().parent().find(".service-title").attr('id'));
+        $(".selected-service-cost").text("$" + $(this).parent().parent().find(".service-cost").attr('id'));
+        $(".selected-service-title").val($(this).parent().parent().find(".service-title").attr('id'));
+        $(".selected-service-cost").val($(this).parent().parent().find(".service-cost").attr('id'));
+        $(".selected-service-description").text($(this).parent().parent().find(".service-description").attr('id'));
+        $(".send-service-request").attr('id', "{{ user['user_id'] }}--" + $(this).parent().parent().find(".service-title").attr('id'));
+    } }, ".expand-service");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+               url: "/edit_service",
+               type: "post",
+               data: {
+                   old_service_title: $(".old-service-title").text(),
+                   old_service_cost: $(".old-service-cost").text(),
+                   old_service_description: $(".old-service-description").text(),
+                   new_service_title: $(".new-service-title").val(),
+                   new_service_cost: $(".new-service-cost").val(),
+                   new_service_description: $(".new-service-description").val()
+               }
+            });
+            location.reload();
+        }
+    }, ".edit-service");
+{% endblock %}
+{% block style %}
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active { color: #f1f1f1; background-color: #07a08d; border-color: #07a08d; }
+.nav-tabs .nav-item.show .nav-link, .nav-tabs a { color: #00A08E; }
+.input-field { background-color: #028678; width: 100%; border-radius: 3px; border: 1px solid #004a41; color: white; padding: 7px; font-size: 14px; letter-spacing: 2px; }
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */ color: #0fbda8; opacity: 1; /* Firefox */ }
+:-ms-input-placeholder { /* Internet Explorer 10-11 */ color: #0fbda8; }
+::-ms-input-placeholder { /* Microsoft Edge */ color: #0fbda8; }
+.sent-success { width: 100%; }
+@media (min-width: 768px) {
+    .sent-success { width: calc(100% - 250px); }
+    #wrapper.toggled .sent-success { margin-right: 0; width: 100%; }
+}
+{% endblock %}
+{% block content %}
+<div class="row no-gutters" style="display: inline-block; width: 100%;">
+    <div class="col profile-page">
+        {% if skeleton['user_type'] == "user" and skeleton['user']['profile']['username'] == user['profile']['username'] %}
+            {% if user['profile']['visible'] == 'false' %}
+                <a href="{{ url_for('profile.make_profile_public')}}" class="row no-gutters">
+                    <div class="col thin-text" style="padding: 5px; padding-top: 20px; height: 100%; width: 100%; text-align: center; background-color: #BD1376; padding-right: 10px; padding-left: 10px; letter-spacing: 1px; text-align: center; font-size: 12px; letter-spacing: 2px;">
+                        <p>Your profile is currently private. Click here to make it public.</p>
+                    </div>
+                </a>
+            {% endif %}
+        {% endif %}
+        <div class="row no-gutters" style="height: 300px; width: 100%; margin-bottom: 50px;">
+            <div class="col" style="padding: 5px; padding-bottom: 15px;">
+                <img src="{{ user['profile']['header_image']['src'] }}" onerror="this.onerror=null;this.src='../../../static/images/banner.png';" style="width: 100%; height: 275px; object-fit: cover;">
+                <img src="{{ user['profile']['profile_image']['src'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 150px; height: 150px; object-fit: cover; position: relative; top: -100px; left: 25px; border-radius: 50%; border: solid 5px #f1f1f1;">
+            </div>
+        </div>
+        <div class="row no-gutters" style="height: 0;">
+            <div class="col-6"></div>
+            <div class="col-6" style="display: flex; flex-wrap: nowrap;">
+                <div class="row" style="width: 100%;">
+                    <div class="col"></div>
+                    {% for social in ["linkedin", "twitter", "instagram", "facebook", "pinterest", "youtube"] %}
+                        {% if user['profile']['social_media'][social] | length > 0 %}
+                            <div class="col-2">
+                                <a href="{{user['profile']['social_media'][social]}}" target="_blank"><img src="../../../static/images/{{ social }}.png" class="social-found" style="width: 25px; position: relative; top: -50px;"></a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-12 col-md-5 d-table" style="padding-left: 25px; padding-right: 25px; margin-bottom: 15px;">
+                <div class="row no-gutters">
+                    <div class="col d-table">
+                        <p class="d-table-cell" style="vertical-align: middle; font-size: 18px; letter-spacing: 2px;">{{ user['profile']['name'] }}</p>
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col d-table">
+                        <p class="d-table-cell" style="vertical-align: middle; font-size: 14px; letter-spacing: 2px; color: #8b8787;">@{{ user['profile']['username'] }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-7" style="margin-bottom: 15px;">
+                {% if skeleton['user_type'] == "user" and skeleton['user']['profile']['username'] == user['profile']['username'] %}
+                    <div class="row no-gutters">
+                        <a href="{{ url_for('profile.user_profile_edit')}}" class="col-12 col-md d-table" style="padding-left: 5px; padding-right: 5px; margin-bottom: 15px; text-decoration none;">
+                            <p class="d-table-cell" style="vertical-align: middle; font-size: 12px; letter-spacing: 2px; color: white; border-radius: 5px; border: solid 1px #00A08E; background-color: #00A08E; padding: 5px; text-align: center; position: relative;">Edit Profile</p>
+                        </a>
+                        {% if user['profile']['visible'] == 'true' %}
+                            <a href="{{ url_for('profile.make_profile_private')}}" class="col-12 col-md d-table" style="padding-left: 5px; padding-right: 5px; margin-bottom: 15px; text-decoration none;">
+                                <p class="d-table-cell" style="vertical-align: middle; font-size: 12px; letter-spacing: 2px; color: white; border-radius: 5px; border: solid 1px #BD1376; background-color: #BD1376; padding: 5px; text-align: center; position: relative;">Make Profile Private</p>
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('profile.make_profile_public')}}" class="col-12 col-md d-table" style="padding-left: 5px; padding-right: 5px; margin-bottom: 15px; text-decoration none;">
+                                <p class="d-table-cell" style="vertical-align: middle; font-size: 12px; letter-spacing: 2px; color: white; border-radius: 5px; border: solid 1px #BD1376; background-color: #BD1376; padding: 5px; text-align: center; position: relative;">Make Profile Public</p>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col" style="padding-left: 25px; padding-right: 25px; margin-bottom: 15px;">
+                {% for link in user['profile']['links'] %}
+                    <a href="{{ link[1] }}" style="color: #00A08E; font-size: 14px; letter-spacing: 2px; margin-right: 15px;"><img src='/static/images/web_link_icon.png' style="height: 13px; margin-right: 5px;">{{ link[0] }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row no-gutters" style="padding: 18px; padding-top: 0; margin-bottom: 10px;">
+            {% if user['profile']['careers'] |length > 0 %}
+                <div class="col" style="display: flex; flex-wrap: wrap;">
+                    {% for career in user['profile']['careers'] %}
+                        <a href="{{ url_for('career.career_page_title', career_title=career )}}" class='d-table' style='margin: 5px; padding: 10px; border-radius: 10px; border: solid 1px #00A08E; text-decoration: none;'>
+                            <div class='d-table-cell' style='vertical-align: middle; font-size: 12px; text-align: center; text-transform: capitalize; color: #00A08E; letter-spacing: 2px;'>{{ career }}</div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="row no-gutters">
+            <div class="col d-table" style="padding-left: 25px; padding-right: 25px; margin-bottom: 15px;">
+                <p class="d-table-cell" style="vertical-align: middle; font-size: 14px; letter-spacing: 1px;">
+                    {% if user['profile']['description']|length > 0 %}{{ user['profile']['description'] }}{% else %}Welcome to my profile!{% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col" style="padding-left: 25px; padding-right: 25px; height: 50px; position: relative;">
+                <img src='/static/images/location_icon.png' style="height: 28px; position: absolute;">
+                <div style="width: 100%; height: 100%; position: relative; left: 40px; display: flex; flex-wrap: wrap;">
+                    {% for location in user['profile']['locations'] %}
+                        <div class='d-table' style='margin: 5px; padding-left: 10px; padding-right: 10px; height: 23px; display: inline-block; border-radius: 5px; border: solid 1px #CDCDCD; font-size: 11px; letter-spacing: 1px;'>
+                            <p class='d-table-cell' style='vertical-align: middle; font-size: 14px; text-align: center; text-transform: capitalize;'>{{ location|replace('-', ', ') }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% if user['profile']['services'] |length > 0 %}
+        <div class="row no-gutters service-controls" style="border-top: solid 1px #d8d5d5; margin-top: 30px; margin-bottom: 20px;"> 
+            <div class="col service-list" id="{{ user['profile']['username']}}" style="width: 100%; padding: 10px; padding-top: 10px; letter-spacing: 1px;">
+                {% if user['profile']['visible'] == 'true' or skeleton['user']['profile']['username'] == user['profile']['username']  %}
+                    <div class="row no-gutters" style="width: 100%; padding-top: 20px; margin-bottom: 20px;">
+                        <div class="col">
+                            <div class="d-table" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 2px;">
+                                <p class="d-table-cell" style="vertical-align: middle; text-align: center;">Select a Service</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row no-gutters">
+                        {% for service in user['profile']['services'] %}
+                        <div class="col-12 col-md-6 col-lg-4 service-listing" style="height: 300px; padding: 10px;">
+                            <div class="row no-gutters service-listing" style="height: 100%; width: 100%; border: 1px solid #00A08E; border-radius: 5px; margin-bottom: 10px; padding: 15px;">
+                                <div class="col" style="text-align: center;">
+                                    <div class="row no-gutters" style="width: 100%; padding-bottom: 10px;">
+                                        <div class="col">
+                                            <div class="d-table" style="width: 100%; height: 100%; font-size: 24px; letter-spacing: 2px;">
+                                                <b class="d-table-cell service-title" id="{{ service['title'] }}" style=" vertical-align: middle;">{{ service['title'] }}</b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters" style="width: 100%; margin-bottom: 10px;">
+                                        <div class="col">
+                                            <div class="d-table" style="width: 100%; height: 100%; font-size: 18px;">
+                                                <p class="d-table-cell service-cost" id="{{ service['cost'] }}" style="vertical-align: middle;">${{ service['cost'] }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters" style="width: 100%; height: 110px; overflow: hidden; padding-bottom: 20px;">
+                                        <div class="col">
+                                            <div class="d-table" style="width: 100%; height: 100%; font-size: 14px;">
+                                                <p class="d-table-cell service-description" id="{{ service['description'] }}">{{ service['description'] }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if skeleton['user_type'] == "user" and skeleton['user']['profile']['username'] == user['profile']['username'] %}
+                                        <div class="row no-gutters" style="width: 100%; position: absolute; bottom: 0; padding: 20px; padding-bottom: 0px; background-color: #f1f1f1">
+                                            <div class="col d-table expand-service hoverable" style="height: 30px; font-size: 11px; text-align: center; background-color: #00A08E; border-radius: 50px; color: white; letter-spacing: 2px;">
+                                                <p class="d-table-cell" style="vertical-align: middle; text-transform: uppercase;">EDIT</p>
+                                            </div>
+                                        </div>
+                                    {% elif skeleton['user_type'] == "user" %}
+                                        <div class="row no-gutters" style="width: 100%; position: absolute; bottom: 0; padding: 20px; padding-bottom: 0px; background-color: #f1f1f1">
+                                            <div class="col d-table expand-service hoverable" style="height: 30px; font-size: 11px; text-align: center; background-color: #00A08E; border-radius: 50px; color: white; letter-spacing: 2px;">
+                                                <p class="d-table-cell" style="vertical-align: middle; text-transform: uppercase;">EXPAND</p>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="row no-gutters" style="width: 100%; position: absolute; bottom: 0; padding: 20px; padding-bottom: 0px; background-color: #f1f1f1">
+                                            <a href="{{ url_for('home.home_page') }}" class="col d-table" style="height: 30px; font-size: 11px; text-align: center; background-color: #00A08E; border-radius: 50px; color: white; letter-spacing: 2px;">
+                                                <p class="d-table-cell" style="vertical-align: middle; text-transform: uppercase;">SIGN IN</p>
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="col-12 col-md-6 col-lg-4 service-listing" style="height: 300px; padding: 10px;">
+                            <div class="row no-gutters service-listing" style="height: 100%; width: 100%; border: 1px solid #00A08E; border-radius: 5px; margin-bottom: 10px; padding: 15px;">
+                                <div class="col" style="text-align: center;">
+                                    <div class="row no-gutters" style="width: 100%; padding-bottom: 10px;">
+                                        <div class="col">
+                                            <div class="d-table" style="width: 100%; height: 100%; font-size: 24px; letter-spacing: 2px;">
+                                                <b class="d-table-cell service-title" id="User's Choice" style=" vertical-align: middle;">User's Choice</b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters" style="width: 100%; margin-bottom: 10px;">
+                                        <div class="col">
+                                            <div class="d-table" style="width: 100%; height: 100%; font-size: 18px;">
+                                                <p class="d-table-cell service-cost" id="1" style="vertical-align: middle;">$1+</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters" style="width: 100%; height: 110px; overflow: hidden; padding-bottom: 20px;">
+                                        <div class="col">
+                                            <div class="d-table" style="width: 100%; height: 100%; font-size: 14px;">
+                                                <p class="d-table-cell service-description" id="Have a specific service in mind that you don't see? Explain to @{{ user['profile']['username'] }} what you're hoping for and let them know what you'd be willing to pay.">Have a specific service in mind that you don't see? Explain to @{{ user['profile']['username'] }} what you're looking for and what you'd be willing to pay.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if skeleton['user_type'] == "user" and skeleton['user']['profile']['username'] == user['profile']['username'] %}
+                                        <div class="row no-gutters" style="width: 100%; position: absolute; bottom: 0; padding: 20px; padding-bottom: 0px; background-color: #f1f1f1">
+                                            <div class="col d-table expand-service hoverable" style="height: 30px; font-size: 11px; text-align: center; background-color: #00A08E; border-radius: 50px; color: white; letter-spacing: 2px;">
+                                                <p class="d-table-cell" style="vertical-align: middle; text-transform: uppercase;">EDIT</p>
+                                            </div>
+                                        </div>
+                                    {% elif skeleton['user_type'] == "user" %}
+                                        <div class="row no-gutters" style="width: 100%; position: absolute; bottom: 0; padding: 20px; padding-bottom: 0px; background-color: #f1f1f1">
+                                            <div class="col d-table expand-service hoverable" style="height: 30px; font-size: 11px; text-align: center; background-color: #00A08E; border-radius: 50px; color: white; letter-spacing: 2px;">
+                                                <p class="d-table-cell" style="vertical-align: middle; text-transform: uppercase;">EXPAND</p>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="row no-gutters" style="width: 100%; position: absolute; bottom: 0; padding: 20px; padding-bottom: 0px; background-color: #f1f1f1">
+                                            <a href="{{ url_for('home.home_page') }}" class="col d-table" style="height: 30px; font-size: 11px; text-align: center; background-color: #00A08E; border-radius: 50px; color: white; letter-spacing: 2px;">
+                                                <p class="d-table-cell" style="vertical-align: middle; text-transform: uppercase;">SIGN IN</p>
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col">
+                        <div class="row no-gutters">
+                            <div class="col d-table" style="height: 100%; padding-left: 3%; padding-right: 2%;">
+                                <div class="row no-gutters" style="height: 50px;"></div>
+                                <div class="row no-gutters">
+                                    <div class="col d-table" style="height: 100%; padding-left: 3%; padding-right: 2%;">
+                                        <p class="d-table-cell" style="height: 100%; width: 100%; font-size: 17px; font-family: 'Raleway', sans-serif; text-align: center; letter-spacing: 2px;">It looks like this user has made their services private.</p>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="height: 50px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+            <div class="row no-gutters service-background-faded" style="position: absolute; top: 0; height: 100%; width: 100%; background-color: #f1f1f1; z-index: 10; opacity: 0.95; display: none;"></div>
+            <div class="row no-gutters service-expanded" id="expand-service-area" style="position: absolute; top: 0; height: 100%; width: 100%; z-index: 100; display: none;">
+                <div class="col-12" style="padding: 20px; position: absolute; bottom: 0;">
+                    {% if skeleton['user_type'] == "user" and skeleton['user']['profile']['username'] == user['profile']['username'] %}
+                        <div style="display: none;">
+                            <p class="selected-service-title old-service-title"></p>
+                            <p class="selected-service-cost old-service-cost"></p>
+                            <p class="selected-service-description old-service-description"></p>
+                        </div>
+                        <div class="row no-gutters" style="width: 100%; background-color: #03695D; margin-bottom: 10px;">
+                             <div class="col form" style="width: 100%; padding: 10px; padding-top: 10px;">
+                                <div class="row no-gutters" style="text-align: right; padding: 10px;">
+                                    <div class="col">
+                                        <img src='/static/images/close_icon.png' class="hoverable collapse-service" style="width: 20px;">
+                                    </div>
+                                </div>
+                                 <div class="row no-gutters" style="padding: 20px;">
+                                    <div class="col d-table" style="width: 100%; height: 100%; font-size: 18px; letter-spacing: 1px;">
+                                        <p class="d-table-cell" style="vertical-align: middle; text-align: center;">Edit This Service</p>
+                                    </div>
+                                </div>
+                                 <div class="row no-gutters service-form input-group col-xs-3" style="margin-bottom: 15px;"> 
+                                    <div class="col">
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding-left: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px;">Service</p>
+                                            </div>
+                                            <div class="col-2"></div>
+                                            <div class="col-3 d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding-left: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px;">Cost (min. $1)</p>
+                                            </div>
+                                        </div>
+                                         <div class="row no-gutters" style="margin-bottom: 10px;">
+                                             <input class="col input-field selected-service-title new-service-title" type="text" placeholder="Service Title" style="padding-left: 7px;">
+                                             <div class="col-1"></div>
+                                             <div class="col-1" style="text-align: right; padding-right: 10px; font-size: 20px; color: white;">$</div>
+                                             <div class="col-3">
+                                                 <input class="input-field selected-service-cost new-service-cost" type="number" placeholder="20.00" style="padding-left: 7px;">
+                                             </div>
+                                         </div>
+                                        <div class="row no-gutters">
+                                            <div class="col d-table" style="height: 100%;">
+                                                <p class="d-table-cell" style="padding-left: 7px; padding-top: 5px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px;">Service Description</p>
+                                            </div>
+                                        </div>
+                                         <div class="row no-gutters" style="margin-bottom: 10px;">
+                                             <textarea class="col input-field form-control selected-service-description new-service-description" type="text" style="height: 200px; padding-left: 7px;"></textarea>
+                                         </div>
+                                        <div class="row no-gutters" style="background-color: #03695D;">
+                                            <div class="col hoverable" style="background-color: #00A08E; padding: 20px;">
+                                                <div class="d-table" style="width: 100%; height: 100%; font-size: 16px; text-align: center; letter-spacing: 2px;">
+                                                    <p class="d-table-cell edit-service" style="color: white; vertical-align: middle;">Edit This Service</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                 </div>
+                             </div>
+                         </div>
+                    {% elif skeleton['user']['profile'] is defined %}
+                        <div class="row no-gutters service-request-form" style="width: 100%; background-color: #03695D; margin-bottom: 10px;">
+                            <div class="col" style="height: 100%; width: 100%; color: white; text-align: center;">
+                                <div class="row no-gutters" style="text-align: right; padding: 10px;">
+                                    <div class="col">
+                                        <img src='/static/images/close_icon.png' class="hoverable collapse-service" style="width: 20px;">
+                                    </div>
+                                </div>
+                                <div class="row no-gutters">
+                                    <div class="col">
+                                        <div class="d-table" style="width: 100%; height: 100%; text-align: center; font-size: 24px; letter-spacing: 1px; padding-bottom: 10px;">
+                                            <p class="d-table-cell selected-service-title" style="vertical-align: middle; color: white;">Title</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters">
+                                    <div class="col">
+                                        <div class="d-table" style="width: 100%; height: 100%; text-align: center; font-size: 18px; letter-spacing: 1px;">
+                                            <p class="d-table-cell selected-service-cost" style="vertical-align: middle; color: white;">Cost</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-bottom: 40px;">
+                                    <div class="col">
+                                        <div class="d-table" style="width: 100%; height: 100%; text-align: center; font-size: 14px; letter-spacing: 1px; padding: 20px;">
+                                            <p class="d-table-cell selected-service-description" style="vertical-align: middle; color: white;">Description</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters">
+                                    <div class="col">
+                                        <textarea class='d-table-cell' id="service-request-message" type="text" style="width: 100%; height: 200px; padding: 3%; font-size: 16px; color: #00A08E; background-color: white; outline: none; border: none;" placeholder="Attach a message with the details of your request."></textarea>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters send-service-request-form send-service-request" style="background-color: #03695D;">
+                                    <div class="col hoverable" style="background-color: #00A08E; padding: 20px;">
+                                        <div class="d-table" style="width: 100%; height: 100%; font-size: 16px; text-align: center; letter-spacing: 2px;">
+                                            <p class="d-table-cell" style="color: white; vertical-align: middle;">Send Request</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters sent-success service-request-sent" style="padding: 20px; position: fixed; top: 50px; display: none;">
+                            <div class="col-12" style="padding: 20px;">
+                                <div class="row" style="width: 100%;">
+                                    <div class="col-2"></div>
+                                    <div class="col-8" style="background-color: #014a40; height: 100%; width: 100%; border: 5px solid #cdcdcd; border-radius: 5px; text-align: center; padding: 10px; box-shadow: 5px 5px 15px black;">
+                                        <div style="width: 100%; text-align: right;"><img src="../../static/images/close_icon.png" class="hoverable collapse-service" style="width: 20px;"></div>
+                                        <img src="../../static/images/grey_check_icon.png" style="width: 70px;">
+                                        <div class="d-table thick text" style="width: 100%; font-size: 20px; letter-spacing: 1px; padding: 30px;">
+                                            <p class="d-table-cell" style="vertical-align: middle; color: white;">Your Request was sent!</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="row no-gutters" style="height: 200px; width: 100%; background-color: #00A08E; padding: 5px; margin-bottom: 10px; margin-top: -10px; display: none;">
+                            <div class="col" style="background-color: #03695D; padding: 10px; margin-top: 20px; border-radius: 5px;">
+                                <div class="d-table" style="width: 100%; height: 100%; font-size: 17px; text-align: center; letter-spacing: 2px;">
+                                    <a href="{{ url_for('profile.profile_page')}}" class="d-table-cell" style="color: white; vertical-align: middle;">Create your profile to request services from users</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

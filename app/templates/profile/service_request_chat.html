@@ -1,0 +1,144 @@
+{% if service_approved != 'none' and status['current_status'] not in ['rejected', 'cancelled', 'completion_confirmed', 'payout_processed', 'reviewed'] %}
+    <div class="row no-gutters" style="height: 5%;">
+        <div class="col-12 d-table" style="width: 100%;">
+            <div class="d-table-cell" style="height: 100%; width: 100%; text-align: center; vertical-align: middle; background-color: #4C4A4A; border: none; padding: 7px; font-size: 14px; letter-spacing: 2px;">Deadline: {{ service_approved['completion_date'] }}</div>
+        </div>
+    </div>
+    <div class="row no-gutters" style="height: 5%;">
+        <div class="col-12 d-table" style="width: 100%;">
+            <div class="d-table-cell" style="height: 100%; width: 100%; text-align: center; vertical-align: middle; background-color: #4C4A4A; border: none; padding: 7px; font-size: 14px; letter-spacing: 2px;">{{ service_approved['days_to_go'] }} Days Left</div>
+        </div>
+    </div>
+{% endif %}
+<div class="row no-gutters" style="padding: 10px; background-color: #BD1376;">
+    <div class="col-12 d-table" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 1px;">
+        <p class="d-table-cell selected-service-title" style="vertical-align: middle; text-align: center; color: white;">
+            {% if messages['users']['service_provider'] == user %}
+                {% if status['current_status'] in ['acceptance_pending', 'charge_processed', 'completion_confirmed'] %}It's your move: {% elif status['current_status'] not in ['rejected', 'complete', 'cancelled', 'reviewed'] %}It's their move.{% endif %}
+            {% else %}
+                {% if status['current_status'] in ['accepted', 'complete'] %}It's your move!{% elif status['current_status'] not in ['rejected', 'complete', 'cancelled', 'completion_confirmed', 'reviewed'] %}It's their move: {% endif %}
+            {% endif %}
+            {% if status['current_status'] == "acceptance_pending" %}
+                {% if messages['users']['service_provider'] == user %}
+                    You can visit the 'Update' tab to decide whether to accept or reject this service request.
+                {% else %}
+                    You're waiting to hear if this service request was accepted.
+                {% endif %}
+            {% elif status['current_status'] == "accepted" %}
+                {% if messages['users']['service_provider'] == user %}
+                    You approved this service request and you will be informed when their payment transfer has been finialized.
+                {% else %}
+                    Great news, your service request has been approved! You can visit the 'Update' tab to make your payment.
+                {% endif %}
+            {% elif status['current_status'] == "rejected" %}
+                {% if messages['users']['service_provider'] == user %}
+                    You declined this service request.
+                {% else %}
+                    Your service request has been declined.
+                {% endif %}
+            {% elif status['current_status'] == "charge_processed" %}
+                {% if messages['users']['service_provider'] == user %}
+                    A payment has been made! Your transaction will be finalized once you fulfill your service and visit the 'Update' tab to mark your service as complete.
+                {% else %}
+                    Your payment transfer was successful.
+                {% endif %}
+            {% elif status['current_status'] == "complete" %}
+                {% if messages['users']['service_provider'] == user %}
+                    You marked this service request as complete!
+                {% else %}
+                    This service request has been marked as complete!
+                {% endif %}
+            {% elif status['current_status'] == "cancelled" %}
+                This service request has been cancelled.
+            {% elif status['current_status'] == "completion_confirmed" %}
+                {% if messages['users']['service_provider'] == user %}
+                    This service request transaction is officially complete! You can transfer your earnings to your bank account from the Earnings page.
+                {% endif %}
+            {% elif status['current_status'] == "payout_processed" %}
+                {% if messages['users']['service_provider'] == user %}
+                    Your payment has been processed!
+                {% else %}
+                    Visit the 'Update' tab to leave a review.
+                {% endif %}
+            {% elif status['current_status'] == "reviewed" %}
+                {% if messages['users']['service_provider'] == user %}
+                    A review of your service has been submitted!
+                {% else %}
+                    You successfully submitted a review.
+                {% endif %}
+            {% endif %}
+        </p>
+    </div>
+</div>
+<div class="row no-gutters" style="{% if service_approved != 'none' %}height: 50%;{% else %}height: 60%;{% endif %} overflow: auto; display: flex; flex-direction: column-reverse;">
+    <div class="col-12 messages" style="height: 100%; padding-left: 20px; padding-right: 20px; overflow: scroll;">
+        {% for message in messages['messages'] %}
+            {% if message['private_to'] is not defined or message['private_to'] == user %}
+                {% if message['sent_by'] == 'status update' %}
+                    <div class="row no-gutters" style="margin-top: 70px; margin-bottom: 70px;">
+                        <div class="col-2"></div>
+                        {% if message['type'] == 'text' %}
+                            <div class="col-8">
+                                <p style="position: relative; padding: 10px; letter-spacing: 1px; background: #cccccc; border-radius: .4em; text-align: center; font-size: 12px;">{{ message['message'] }}</p>
+                            </div>
+                        {% else %}
+                            {% if message['subtype'] == 'confirm_service_request_completion' or message['subtype'] == 'deadline_extension_request' %}
+                                <div class="col-8 {% if message['subtype'] == 'confirm_service_request_completion' %}confirm-completion-message{% else %}deadline-extension-request-message{% endif %}" style="background: #4C4A4A; border: solid 1px #4C4A4A; border-radius: .4em;">
+                                    <div class="row no-gutters">
+                                        <div class="col-12">
+                                            <p style="position: relative; padding: 10px; letter-spacing: 1px; text-align: center; font-size: 12px;">{{ message['message'] }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters" style="padding-top: 10px; padding-bottom: 10px; background: #f1f1f1; border-radius: .4em;">
+                                        <div class="col-3"></div>
+                                        <div class="col-2">
+                                            <img src='/static/images/circle_x.png' class="hoverable {% if message['subtype'] == 'confirm_service_request_completion' %}dispute-service-completion{% else %}reject-deadline-extension{% endif %}" id="{{ messages['message_id'] }}" style="width: 100%;">
+                                        </div>
+                                        <div class="col-2"></div>
+                                        <div class="col-2">
+                                            <img src='/static/images/circle_check.png' class="hoverable {% if message['subtype'] == 'confirm_service_request_completion' %}confirm-service-completion{% else %}accept-deadline-extension{% endif %}" id="{{ messages['message_id'] }}" style="width: 100%;">
+                                        </div>
+                                        <div class="col-3"></div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        <div class="col-2"></div>
+                    </div>
+                {% else %}
+                    <div class="row no-gutters" style="margin-top: 10px;">
+                        {% if message['sent_by'] == user %}
+                            <div class="col-1"></div>
+                            <div class="col-11" style="padding-right: 20px;">
+                                <p class="sender-speech-bubble">{{ message['message'] }}</p>
+                            </div>
+                        {% else %}
+                            <div class="col-11" style="padding: 10px;">
+                                <p class="speech-bubble">{{ message['message'] }}</p>
+                            </div>
+                            <div class="col-1"></div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+<div class="row no-gutters" style="height: 15%;">
+    <div class="col d-table" style="width: 100%;">
+        {% if not status in ['rejected', 'cancelled', 'completion_confirmed', 'payout_processed', 'reviewed'] %}
+            <textarea id="new-message" placeholder="Write a message..." min="3" style="height: 80px; width: 100%; background-color: #e6e6e6; border: none; color: #00A08E; padding: 7px; font-size: 14px; letter-spacing: 2px;"></textarea>
+        {% else %}
+            <div class="thick-text" style="height: 80px; width: 100%; background-color: #004a41; border: none; color: #00A08E; padding: 7px; font-size: 16px; letter-spacing: 2px; text-align: center;">This conversation has been archived.</div>
+        {% endif %}
+    </div>
+</div>
+{% if not status in ['rejected', 'cancelled', 'completion_confirmed', 'payout_processed', 'reviewed'] %}
+    <div class="row no-gutters" style="position: absolute; height: 45px; width: 100%; bottom: 20px;">
+        <div class="col-2"></div>
+        <div class="col-8 d-table send-message hoverable" id="{{ messages['message_id'] }}" style="height: 45px; font-size: 14px; text-align: center; background-color: #00A08E; border-radius: 3px; color: white; letter-spacing: 2px;">
+            <div class="d-table-cell" style="vertical-align: middle;">Send</div>
+        </div>
+        <div class="col-2"></div>
+    </div>
+{% endif %}

@@ -1,0 +1,349 @@
+{% extends skeleton['template'] %}
+{% block title %}Ambikor | Someone to turn to for guidance for any endeavour{% endblock %}
+{% block style %}
+.article { margin-top: 15px; margin-bottom: 10px; padding: 20px; padding-top: 0; text-decoration: none;}
+.article-title { position: absolute; width: 90%; bottom: 10px; left: 10px; background-color: #e6e6e6; padding-top: 10px; padding-bottom: 10px; opacity: 0.9; }
+.article-title p { white-space: normal; padding: 5px; padding-left: 15px; letter-spacing: 4px; font-size: 12px; text-transform: uppercase; }
+.see-all-button {height: 30px; font-size: 11px; text-align: center; background-color: #00A08E; border-radius: 50px; color: white; letter-spacing: 2px;}
+.see-all-button .d-table-cell {vertical-align: middle; text-transform: uppercase;}
+.service-steps-row {padding: 40px; border-bottom: dotted 1px #767170;}
+{% endblock %}
+{% block content %}
+ <div class="row no-gutters" id="home-body" style="margin-top: 10px;">
+    <div class="col">
+        {% if skeleton['user_type'] != "user" %}
+            <div class="row no-gutters thin-text" style="padding-top: 50px; padding-bottom: 50px;">
+                <div class="col-12 col-md-6" style="height: 100%; padding-left: 3%; padding-right: 2%;">
+                    <div class="row no-gutters">
+                        <div class="col d-table" style="height: 100%; padding-left: 3%; padding-right: 2%;">
+                            <p class="d-table-cell" style="height: 100%; width: 100%; font-size: 22px; text-align: center; vertical-align: middle; letter-spacing: 2px; line-height: 2;">Find guidance and mentorship services from experts spanning across every career imaginable</p>
+                        </div>
+                    </div>
+                    <div class="row no-gutters" style="padding-top: 50px;">
+                        <div class="col" style="padding-left: 10%; padding-right: 10%;">
+                            <div class="row no-gutters" style="margin-bottom: 15px;">
+                                <div class="col">
+                                    <input style="position: relative; width: 100%; height: 35px; font-size: 12px; background-color: #f1f1f1; border: 1px solid #BD1376; border-radius: 5px; font-family: 'Raleway', sans-serif; padding-left: 2%; z-index: 5;" placeholder="Username" />
+                                </div>
+                            </div>
+                            <div class="row no-gutters" style="margin-bottom: 15px;">
+                                <div class="col">
+                                    <input style="position: relative; width: 100%; height: 35px; font-size: 12px; background-color: #f1f1f1; border: 1px solid #BD1376; border-radius: 5px; font-family: 'Raleway', sans-serif; padding-left: 2%; z-index: 5;" placeholder="Email") />
+                                </div>
+                            </div>
+                            <div class="row no-gutters" style="margin-bottom: 20px;">
+                                <div class="col">
+                                    <input style="position: relative; width: 100%; height: 35px; font-size: 12px; background-color: #f1f1f1; border: 1px solid #BD1376; border-radius: 5px; font-family: 'Raleway', sans-serif; padding-left: 2%; z-index: 5;" placeholder="Password (5 - 20 characters)") />
+                                </div>
+                            </div>
+                            <div class="row no-gutters" style="margin-bottom: 15px;">
+                                <div class="col">
+                                    <a href="{{ url_for('auth.user_login') }}">
+                                        <div class="hoverable" style="position: relative; width: 100%; height: 55px; background-color: #BD1376; text-align: center; font-size: 14px; color: white; border: none; border-radius: 3px; font-family: 'Raleway', sans-serif; z-index: 5; letter-spacing: 2px; display: flex; align-items: center; justify-content: center;">CREATE YOUR FREE ACCOUNT</div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="row no-gutters" style="height: 25%; text-align: center;">
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_legal.png' style="height: 60px;">
+                        </div>
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_data.png' style="height: 60px;">
+                        </div>
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_space.png' style="height: 60px;">
+                        </div>
+                    </div>
+                    <div class="row no-gutters" style="height: 25%; text-align: center;">
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_education.png' style="height: 60px;">
+                        </div>
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_beauty.png' style="height: 60px;">
+                        </div>
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_community.png' style="height: 60px;">
+                        </div>
+                    </div>
+                    <div class="row no-gutters" style="height: 25%; text-align: center;">
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_appearance.png' style="height: 60px;">
+                        </div>
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_social_good.png' style="height: 60px;">
+                        </div>
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_entertainment.png' style="height: 60px;">
+                        </div>
+                    </div>
+                    <div class="row no-gutters" style="height: 25%; text-align: center;">
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_design.png' style="height: 60px;">
+                        </div>
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_video.png' style="height: 60px;">
+                        </div>
+                        <div class="col-4" style="padding: 15px;">
+                            <img src='../../../static/images/cat_culture.png' style="height: 60px">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col d-table" style="border-top: 1px solid #dadada; padding: 30px;">
+                    <p class="d-table-cell" style="vertical-align: middle; font-size: 16px; text-align: center; letter-spacing: 3px;">Find services like these:</p>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="d-none d-md-block col-md-4" style="position: relative; left: 4%; padding: 20px; z-index: 1;">
+                    <a href="{{ url_for('career.career_page_title', career_title=sample_services[0]['career']|lower) }}" class="row no-gutters" style="width: 100%; background-color: #f1f1f1; border: 1px solid #00A08E; border-radius: 5px; box-shadow: 1px 5px 6px black; text-decoration: none;">
+                        <div class="col">
+                            <div class="row no-gutters" style="margin-bottom: 10px; background-color: #0da08d">
+                                <div class="col-3 d-table" style="height: 80px;">
+                                    <img src='{{ sample_services[0]["img"] }}' style="width: 80px; vertical-align: middle; margin-right: 10px;">
+                                </div>
+                                <div class="col d-table" style="height: 80px;">
+                                    <p class="d-table-cell" style="vertical-align: middle; font-size: 16px; color: white; letter-spacing: 2px;">{{ sample_services[0]['name'] }}<br><span style="font-size: 10px;">{{ sample_services[0]['career'] }}</span></p>
+                                </div>
+                            </div>
+                            <div class="row no-gutters">
+                                <div class="col" style="padding: 10px; color: black; text-align: center;">
+                                    <p style="font-size: 16px; letter-spacing: 3px;">{{ sample_services[0]['service'] }}</p>
+                                    <p style="font-size: 12px; letter-spacing: 3px;">${{ sample_services[0]['cost'] }}</p>
+                                    <p style="font-size: 12px; letter-spacing: 2px;">{{ sample_services[0]['description'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="d-md-none col-1"></div>
+                <div class="col-10 col-md-4" style="position: relative; top: 40px; padding: 5px; z-index: 2;">
+                    <a href="{{ url_for('career.career_page_title', career_title=sample_services[1]['career']|lower) }}" class="row no-gutters" style="width: 100%; background-color: #f1f1f1; border: 1px solid #00A08E; border-radius: 5px; box-shadow: 1px 5px 6px black; text-decoration: none;">
+                        <div class="col">
+                            <div class="row no-gutters" style="margin-bottom: 10px; background-color: #0da08d">
+                                <div class="col-3 d-table" style="height: 90px;">
+                                    <img src='{{ sample_services[1]["img"] }}' style="width: 90px; vertical-align: middle; margin-right: 10px;">
+                                </div>
+                                <div class="col d-table" style="height: 90px;">
+                                    <p class="d-table-cell" style="vertical-align: middle; font-size: 18px; color: white; letter-spacing: 2px;">{{ sample_services[1]['name'] }}<br><span style="font-size: 12px;">{{ sample_services[1]['career'] }}</span></p>
+                                </div>
+                            </div>
+                            <div class="row no-gutters">
+                                <div class="col" style="padding: 10px; color: black; text-align: center;">
+                                    <p style="font-size: 18px; letter-spacing: 3px;">{{ sample_services[1]['service'] }}</p>
+                                    <p style="font-size: 14px; letter-spacing: 3px;">${{ sample_services[1]['cost'] }}</p>
+                                    <p style="font-size: 14px; letter-spacing: 2px;">{{ sample_services[1]['description'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="d-md-none col-1"></div>
+                <div class="d-none d-md-block col-md-4" style="position: relative; left: -4%; padding: 20px; z-index: 1;">
+                    <a href="{{ url_for('career.career_page_title', career_title=sample_services[2]['career']|lower) }}" class="row no-gutters" style="width: 100%; background-color: #f1f1f1; border: 1px solid #00A08E; border-radius: 5px; box-shadow: 1px 5px 6px black; text-decoration: none;">
+                        <div class="col">
+                            <div class="row no-gutters" style="margin-bottom: 10px; background-color: #0da08d">
+                                <div class="col-3 d-table" style="height: 80px;">
+                                    <img src='{{ sample_services[2]["img"] }}' style="width: 80px; vertical-align: middle; margin-right: 10px;">
+                                </div>
+                                <div class="col d-table" style="height: 80px;">
+                                    <p class="d-table-cell" style="vertical-align: middle; font-size: 16px; color: white; letter-spacing: 2px;">{{ sample_services[2]['name'] }}<br><span style="font-size: 10px;">{{ sample_services[2]['career'] }}</span></p>
+                                </div>
+                            </div>
+                            <div class="row no-gutters">
+                                <div class="col" style="padding: 10px; color: black; text-align: center;">
+                                    <p style="font-size: 16px; letter-spacing: 3px;">{{ sample_services[2]['service'] }}</p>
+                                    <p style="font-size: 12px; letter-spacing: 3px;">${{ sample_services[2]['cost'] }}</p>
+                                    <p style="font-size: 12px; letter-spacing: 2px;">{{ sample_services[2]['description'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="d-md-none col-1"></div>
+                <div class="d-md-none col-10" style="position: relative; top: 40px; padding: 5px; z-index: 2;">
+                    <a href="{{ url_for('career.career_page_title', career_title=sample_services[3]['career']|lower) }}" class="row no-gutters" style="width: 100%; background-color: #f1f1f1; border: 1px solid #00A08E; border-radius: 5px; box-shadow: 1px 5px 6px black; text-decoration: none;">
+                        <div class="col">
+                            <div class="row no-gutters" style="margin-bottom: 10px; background-color: #0da08d">
+                                <div class="col-3 d-table" style="height: 90px;">
+                                    <img src='{{ sample_services[3]["img"] }}' style="width: 90px; vertical-align: middle; margin-right: 10px;">
+                                </div>
+                                <div class="col d-table" style="height: 90px;">
+                                    <p class="d-table-cell" style="vertical-align: middle; font-size: 18px; color: white; letter-spacing: 2px;">{{ sample_services[3]['name'] }}<br><span style="font-size: 12px;">{{ sample_services[3]['career'] }}</span></p>
+                                </div>
+                            </div>
+                            <div class="row no-gutters">
+                                <div class="col" style="padding: 10px; color: black; text-align: center;">
+                                    <p style="font-size: 18px; letter-spacing: 3px;">{{ sample_services[3]['service'] }}</p>
+                                    <p style="font-size: 14px; letter-spacing: 3px;">${{ sample_services[3]['cost'] }}</p>
+                                    <p style="font-size: 14px; letter-spacing: 2px;">{{ sample_services[3]['description'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="d-md-none col-1"></div>
+            </div>
+            <div class="row no-gutters">
+                <div class="d-md-none col-1"></div>
+                <div class="d-md-none col-10" style="position: relative; top: 40px; padding: 5px; z-index: 2;">
+                    <a href="{{ url_for('career.career_page_title', career_title=sample_services[4]['career']|lower) }}" class="row no-gutters" style="width: 100%; background-color: #f1f1f1; border: 1px solid #00A08E; border-radius: 5px; box-shadow: 1px 5px 6px black; text-decoration: none;">
+                        <div class="col">
+                            <div class="row no-gutters" style="margin-bottom: 10px; background-color: #0da08d">
+                                <div class="col-3 d-table" style="height: 90px;">
+                                    <img src='{{ sample_services[4]["img"] }}' style="width: 90px; vertical-align: middle; margin-right: 10px;">
+                                </div>
+                                <div class="col d-table" style="height: 90px;">
+                                    <p class="d-table-cell" style="vertical-align: middle; font-size: 18px; color: white; letter-spacing: 2px;">{{ sample_services[4]['name'] }}<br><span style="font-size: 12px;">{{ sample_services[4]['career'] }}</span></p>
+                                </div>
+                            </div>
+                            <div class="row no-gutters">
+                                <div class="col" style="padding: 10px; color: black; text-align: center;">
+                                    <p style="font-size: 18px; letter-spacing: 3px;">{{ sample_services[4]['service'] }}</p>
+                                    <p style="font-size: 14px; letter-spacing: 3px;">${{ sample_services[4]['cost'] }}</p>
+                                    <p style="font-size: 14px; letter-spacing: 2px;">{{ sample_services[4]['description'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="d-md-none col-1"></div>
+            </div>
+            <div class="row no-gutters" style="margin-top: 100px;">
+                <div class="col d-table" style="padding: 30px; width: 100%;">
+                    <p class="d-table-cell" style="vertical-align: middle; font-size: 16px; text-align: center; letter-spacing: 3px;">And these:</p>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col" style="background-color: #b9d4d1;">
+                    <div class="row no-gutters">
+                        <div class="col-12 col-md-6">
+                          {% for row in [[("Advice", "advice"), ("Critiques", "critique")], [("Reaction Videos", "video"), ("Portfolio Review", "redesign")]] %}
+                                <div class="row no-gutters">
+                                    {% if loop.index0 % 2 == 1 %}
+                                        {% for icon in row %}
+                                        <div class="col" style="{% if loop.index0 % 2 == 1 %}background-color: #e2e2e2;{% endif %} overflow: hidden; height: 115px;">
+                                            <div class="row no-gutters" style='text-align: center; padding-top: 15px;'>
+                                                <div class="col"><img src='../../../static/images/{{ icon[1] }}_icon.png' style="height: 40px;"></div>
+                                            </div>
+                                            <div class="row no-gutters" style="margin-top: 10px; padding-bottom: 10px;">
+                                                <div class="col d-table">
+                                                    <p class="d-table-cell" style="vertical-align: middle; font-size: 12px; text-align: center; letter-spacing: 2px;">{{ icon[0] }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for icon in row %}
+                                        <div class="col" style="{% if loop.index0 % 2 == 0 %}background-color: #e2e2e2;{% endif %} overflow: hidden; height: 115px;">
+                                            <div class="row no-gutters" style='text-align: center; padding-top: 15px;'>
+                                                <div class="col"><img src='../../../static/images/{{ icon[1] }}_icon.png' style="height: 40px;"></div>
+                                            </div>
+                                            <div class="row no-gutters" style="margin-top: 10px; padding-bottom: 10px;">
+                                                <div class="col d-table">
+                                                    <p class="d-table-cell" style="vertical-align: middle; font-size: 12px; text-align: center; letter-spacing: 2px;">{{ icon[0] }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-12 col-md-6">
+                          {% for row in [[("Shadow Shifts", "shadow"), ("Internships", "internship")], [("Brainstorming Sessions", "experience"), ("And many more", "more")]] %}
+                                <div class="row no-gutters">
+                                    {% if loop.index0 % 2 == 1 %}
+                                        {% for icon in row %}
+                                        <div class="col" style="{% if loop.index0 % 2 == 1 %}background-color: #e2e2e2;{% endif %} overflow: hidden; height: 115px;">
+                                            <div class="row no-gutters" style='text-align: center; padding-top: 15px;'>
+                                                <div class="col"><img src='../../../static/images/{{ icon[1] }}_icon.png' style="height: 40px;"></div>
+                                            </div>
+                                            <div class="row no-gutters" style="margin-top: 10px; padding-bottom: 10px;">
+                                                <div class="col d-table">
+                                                    <p class="d-table-cell" style="vertical-align: middle; font-size: 12px; text-align: center; letter-spacing: 2px;">{{ icon[0] }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for icon in row %}
+                                        <div class="col" style="{% if loop.index0 % 2 == 0 %}background-color: #e2e2e2;{% endif %} overflow: hidden; height: 115px;">
+                                            <div class="row no-gutters" style='text-align: center; padding-top: 15px;'>
+                                                <div class="col"><img src='../../../static/images/{{ icon[1] }}_icon.png' style="height: 40px;"></div>
+                                            </div>
+                                            <div class="row no-gutters" style="margin-top: 10px; padding-bottom: 10px;">
+                                                <div class="col d-table">
+                                                    <p class="d-table-cell" style="vertical-align: middle; font-size: 12px; text-align: center; letter-spacing: 2px;">{{ icon[0] }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters thin-text" style="padding-bottom: 50px; border-top: 1px solid #dadada;">
+                <div class="col d-table" style="height: 100%; padding-right: 2%;">
+                    <div class="row no-gutters" style="margin-top: 50px;">
+                        <div class="col d-table">
+                            <p class="d-table-cell" style="width: 100%; font-size: 18px; text-align: center; letter-spacing: 3px;">Become a mentor on Ambikor</p>
+                        </div>
+                    </div>
+                    <div class="row no-gutters" style="margin-top: 20px;">
+                        <div class="col d-table">
+                            <p class="d-table-cell" style="width: 100%; font-size: 14px; text-align: center; letter-spacing: 2px;">Earn money. Share your expertise. Build your following.</p>
+                        </div>
+                    </div>
+                    <div class="row no-gutters" style="margin-top: 20px; margin-bottom: 15px;">
+                        <div class="col-3"></div>
+                        <div class="col-6 d-table" style="height: 55px;">
+                            <a href="{{ url_for('home.career_guide_info')}}" class="d-table-cell hoverable" style="width: 100%; height: 55px; background-color: #BD1376; text-align: center; font-size: 14px; color: white; border-radius: 3px; vertical-align: middle; letter-spacing: 2px;">LEARN MORE</a>
+                        </div>
+                        <div class="col-3"></div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row no-gutters" style="padding-left: 20px; padding-right: 20px;">
+            {% set colls = collections[:6] if skeleton['user_type'] != "user" else collections %}
+            {% for content in colls %}
+                <a href="/article/{{ content['url'] }}" class="col-12 col-md-6 col-xl-4 article">
+                    <div class="row no-gutters" style="height: 250px;">
+                        <div class="col article-img" style="padding: 10px;">
+                            <img src="{{ content['image'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 100%; height: 250px; object-fit: cover;">
+                        </div>
+                    </div>
+                    <div class="row no-gutters article-title">
+                        <div class="col d-table">
+                            <p class="d-table-cell" style="color: black; padding-right: 25px;">{{ content['title'] }}</p>
+                            {% if skeleton['user_type'] == 'user' %}
+                                <img src='/static/images/star_icon.png' class="bookmark-add hoverable" id="collection-{{content['url']}}" style="position: absolute; right: 5px; height: 17px; {%if content['url'] in skeleton['user']['bookmarks']['collections']%}display: none;{%endif%}"  onclick="event.preventDefault()">
+                                <img src='/static/images/star_pink_icon.png' class="bookmark-remove hoverable" id="collection-{{content['url']}}" style="position: absolute; right: 5px; height: 17px; {%if not content['url'] in skeleton['user']['bookmarks']['collections']%}display: none;{%endif%}"  onclick="event.preventDefault()">
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        {% if skeleton['user_type'] != "user" %}
+            <div class="row no-gutters" style="width: 100%; margin-top: 25px; padding-bottom: 20px;">
+                <div class="col-4"></div>
+                <a href="{{ url_for('career.career_archive') }}" class="col-4 d-table see-all-button">
+                    <p class="d-table-cell" style="color: white;">SEE ALL EXPERTS</p>
+                </a>
+                <div class="col-4"></div>
+            </div>
+        {% endif %}
+     </div>
+</div>
+{% endblock %}

@@ -1,0 +1,182 @@
+<div class="row no-gutters" style="width: 100%; padding: 10px;">
+    <div class="col-1"></div>
+    <div class="col" style="height: 100%; width: 100%;">
+        <div class="row no-gutters" style="padding-top: 20px; margin-bottom: 20px;">
+            <div class="col d-table" style="width: 100%; height: 100%; font-size: 18px; letter-spacing: 1px; margin-right: 10px;">
+                <p class="d-table-cell selected-service-title" style="vertical-align: middle; text-align: center; text-transform: capitalize;">Current Status: 
+                    {% if status['current_status'] == "acceptance_pending" %}
+                        Acceptance Pending
+                    {% elif status['current_status'] == "charge_processed" %}
+                        Charge Processed
+                    {% elif status['current_status'] == "completion_confirmed" %}
+                        Service Completion Confirmed
+                    {% elif status['current_status'] == "payout_processed" %}
+                        Payout Processed
+                    {% else %}
+                        {{ status['current_status'] }}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="row no-gutters" style="margin-bottom: 30px; padding-top: 20px;">
+            <div class="col d-table" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 1px;">
+                <p class="d-table-cell selected-service-title" style="vertical-align: middle; text-align: center;">
+                    {% if message['users']['service_provider'] == user %}
+                        {% if status['current_status'] in ['acceptance_pending', 'charge_processed', 'completion_confirmed'] %}It's your move: {% elif status['current_status'] not in ['rejected', 'complete', 'cancelled'] %}It's their move.{% endif %}
+                    {% else %}
+                        {% if status['current_status'] in ['accepted', 'complete'] %}It's your move!{% elif status['current_status'] not in ['rejected', 'complete', 'completion_confirmed', 'cancelled'] %}It's their move: {% endif %}
+                    {% endif %}
+                    <br><br>
+                    {% if status['current_status'] == "acceptance_pending" %}
+                        {% if message['users']['service_provider'] == user %}
+                            You can visit the 'Update' tab to decide whether to accept or reject this service request.
+                        {% else %}
+                            You're waiting to hear if this service request was accepted.
+                        {% endif %}
+                    {% elif status['current_status'] == "accepted" %}
+                        {% if message['users']['service_provider'] == user %}
+                            You approved this service request and you will be informed when their payment transfer has been finialized.
+                        {% else %}
+                            Great news, your service request has been approved! You can visit the 'Update' tab to make your payment.
+                        {% endif %}
+                    {% elif status['current_status'] == "rejected" %}
+                        {% if message['users']['service_provider'] == user %}
+                            You declined this service request.
+                        {% else %}
+                            Your service request has been declined.
+                        {% endif %}
+                    {% elif status['current_status'] == "charge_processed" %}
+                        {% if message['users']['service_provider'] == user %}
+                            A payment has been made! Your transaction will be finalized once you fulfill your service and visit the 'Update' tab to mark your service as complete.
+                        {% else %}
+                            Your payment transfer was successful.
+                        {% endif %}
+                    {% elif status['current_status'] == "complete" %}
+                        {% if message['users']['service_provider'] == user %}
+                            You marked this service request as complete!
+                        {% else %}
+                            This service request has been marked as complete!
+                        {% endif %}
+                    {% elif status['current_status'] == "cancelled" %}
+                        This service has been cancelled.
+                    {% elif status['current_status'] == "completion_confirmed" %}
+                        {% if message['users']['service_provider'] == user %}
+                            This service request transaction is officially complete! You can transfer your earnings to your bank account from the Earnings page.
+                        {% endif %}
+                    {% elif status['current_status'] == "payout_processed" %}
+                        {% if message['users']['service_provider'] == user %}
+                            Your payment has been processed!
+                        {% else %}
+                            Visit the 'Update' tab to leave a review.
+                        {% endif %}
+                    {% elif status['current_status'] == "reviewed" %}
+                        {% if message['users']['service_provider'] == user %}
+                            A review of your service has been submitted!
+                        {% else %}
+                            You successfully submitted a review.
+                        {% endif %}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="row no-gutters" style="margin-bottom: 20px;">
+            <div class="col" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 2px;">
+                <img class="profile-icon-anchor profile-icon" src='/static/images/check_blue.png' style="width: 30px;">
+                {% if message['users']['service_provider'] == user %}
+                    You received this service request
+                {% else %}
+                    You sent this service request
+                {% endif %}
+            </div>
+        </div>
+        <div class="row no-gutters" style="margin-bottom: 20px;">
+            <div class="col" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 2px;">
+                {% if status['provider_acceptance'] in ['accepted', 'rejected'] %}
+                    <img class="profile-icon-anchor profile-icon" src='/static/images/check_blue.png' style="width: 30px;">
+                {% else %}
+                    <img class="profile-icon-anchor profile-icon" src='/static/images/x_pink.png' style="width: 30px;">
+                {% endif %}
+                {% if status['provider_acceptance'] == 'pending' or status['provider_acceptance'] == 'accepted' %}
+                    {% if message['users']['service_provider'] == user %}
+                        You accepted this service request
+                    {% else %}
+                        Your service request was accepted
+                    {% endif %}
+                {% else %}
+                    This service request was rejected
+                {% endif %}
+            </div>
+        </div>
+        {% if status['provider_acceptance'] != 'rejected' %}
+            <div class="row no-gutters" style="margin-bottom: 20px;">
+                <div class="col" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 2px;">
+                    {% if status['requester_charge'] == 'true' %}
+                        <img class="profile-icon-anchor profile-icon" src='/static/images/check_blue.png' style="width: 30px;">
+                    {% else %}
+                        <img class="profile-icon-anchor profile-icon" src='/static/images/x_pink.png' style="width: 30px;">
+                    {% endif %}
+                    {% if message['users']['service_provider'] == user %}
+                        Their payment has been processed
+                    {% else %}
+                        Your payment was processed
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row no-gutters" style="margin-bottom: 20px;">
+                <div class="col" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 2px;">
+                    {% if status['provider_completion'] == 'complete' %}
+                        <img class="profile-icon-anchor profile-icon" src='/static/images/check_blue.png' style="width: 30px;">
+                    {% else %}
+                        <img class="profile-icon-anchor profile-icon" src='/static/images/x_pink.png' style="width: 30px;">
+                    {% endif %}
+                    {% if status['provider_completion'] == 'pending' or status['provider_completion'] == 'complete' %}
+                        {% if message['users']['service_provider'] == user %}
+                            You completed this service request
+                        {% else %}
+                            Your service request has been completed
+                        {% endif %}
+                    {% else %}
+                            This service has been cancelled
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row no-gutters" style="margin-bottom: 20px;">
+                <div class="col" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 2px;">
+                    {% if status['completion_confirmed'] == 'true' %}
+                        <img class="profile-icon-anchor profile-icon" src='/static/images/check_blue.png' style="width: 30px;">
+                    {% else %}
+                        <img class="profile-icon-anchor profile-icon" src='/static/images/x_pink.png' style="width: 30px;">
+                    {% endif %}
+                    Service completion has been confirmed.
+                </div>
+            </div>
+            {% if message['users']['service_provider'] == user %}
+                <div class="row no-gutters" style="margin-bottom: 20px;">
+                    <div class="col" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 2px;">
+                    {% if status['payout_processed'] == 'true' %}
+                        <img class="profile-icon-anchor profile-icon" src='/static/images/check_blue.png' style="width: 30px;">
+                    {% else %}
+                        <img class="profile-icon-anchor profile-icon" src='/static/images/x_pink.png' style="width: 30px;">
+                    {% endif %}
+                        Your payment has been transferred.
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row no-gutters" style="margin-bottom: 20px;">
+                <div class="col" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 2px;">
+                    {% if status['requester_reviewed'] == 'true' %}
+                        <img class="profile-icon-anchor profile-icon" src='/static/images/check_blue.png' style="width: 30px;">
+                    {% else %}
+                        <img class="profile-icon-anchor profile-icon" src='/static/images/x_pink.png' style="width: 30px;">
+                    {% endif %}
+                    {% if message['users']['service_provider'] == user %}
+                        Your service has been reviewed
+                    {% else %}
+                        You reviewed this service
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-1"></div>
+</div>

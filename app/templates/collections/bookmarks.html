@@ -1,0 +1,331 @@
+{% extends skeleton['template'] %}
+{% block title %}Ambikor - Collections{% endblock %}
+{% block startscript2 %}
+    $(document).on({
+        mouseenter: function () { $(this).css({"background-color": "#03695D"}); },
+        mouseleave: function () { $(this).css({"background-color": "#00A08E"}); },
+        click: function (){
+            $(this).css({"background-color": "#3B3838", "border": "dashed 1px #00A08E"});
+            $(this).removeClass("collection-added");
+            $(this).addClass("collection-not-added");
+        }
+    }, ".collection-added");
+
+    $(document).on({
+        mouseenter: function () { $(this).css({"background-color": "#03695D"}); },
+        mouseleave: function () { $(this).css({"background-color": "#3B3838"}); },
+        click: function (){
+            $(this).css({"background-color": "#00A08E", "border": "none"});
+            $(this).addClass("collection-added");
+            $(this).removeClass("collection-not-added");
+        }
+    }, ".collection-not-added");
+
+    $(document).on({
+        mouseenter: function () { $(this).css({"background-color": "#BD1376"}); },
+        mouseleave: function () { $(this).css({"background-color": "#f1f1f1"}); },
+        click: function (){
+            $(".confirm-collection-deletion-form").show();
+            $("#collection-to-delete").text($.trim($(this).parent().parent().find(".collection-selection").text()))
+        }
+    }, ".collection-removal");
+
+    $(document).on({
+        mouseenter: function () { $(this).css({"background-color": "#03695D"}); },
+        mouseleave: function () { $(this).css({"background-color": "#f1f1f1"}); },
+        click: function (){
+            $('#collection-companies').empty();
+            $.ajax({
+                url: "/get_collection",
+                type: "post",
+                data: { get_collection: $.trim($(this).text()) },
+                success: function(response) { $('#collection-companies').append(response); }
+             });                    
+        }
+    }, ".collection-selection");
+
+    $(document).on({
+        click: function (){
+            $('.bookmarks-area').empty();
+            $.ajax({
+                url: "/get_bookmarked_collections",
+                type: "post",
+                data: {bookmarked_coll: $(this).attr('id')},
+                success: function(response) { $('.bookmarks-area').append(response); }
+             });
+        }
+    }, ".bookmarked-selection");
+
+{% endblock %}
+{% block style %}
+    .outer-body-row { height:100%; display: flex; flex-wrap: wrap; }
+    .outer-body-col { display: inline-block; }
+    .tag {
+        margin: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+        height: 23px;
+        display: inline-block;
+        border-radius: 5px;
+        background-color: #BD1376;
+        font-size: 11px;
+        text-align: center;
+        letter-spacing: 1px;
+    }
+    .tag-cell { vertical-align: middle; font-size: 11px; text-align: center; }
+    .tag-submit {
+        height: 36px;
+        width: 100%;
+        background-color: #BD1376;
+        border: 1px solid #BD1376;
+        font-family: 'Raleway', sans-serif;
+        color: white;
+        letter-spacing: 4px; 
+        font-size: 20px;
+    }
+    .industry-type-submit {
+        height: 36px;
+        width: 100%;
+        background-color: #BD1376;
+        border: 1px solid #BD1376;
+        font-family: 'Raleway', sans-serif;
+        color: white;
+        letter-spacing: 4px; 
+        font-size: 20px;
+    }
+    .see-all-button {height: 30px; font-size: 11px; text-align: center; border: 1px dotted #BD1376; border-radius: 5px; color: white; letter-spacing: 2px; padding: 10px;}
+    .see-all-button .d-table-cell {vertical-align: middle;}
+    .skill-submit {
+        height: 36px;
+        width: 100%;
+        background-color: #BD1376;
+        border: 1px solid #BD1376;
+        font-family: 'Raleway', sans-serif;
+        color: white;
+        letter-spacing: 4px; 
+        font-size: 20px;
+    }
+    .type-submit {
+        height: 36px;
+        width: 100%;
+        background-color: #BD1376;
+        border: 1px solid #BD1376;
+        font-family: 'Raleway', sans-serif;
+        color: white;
+        letter-spacing: 4px; 
+        font-size: 20px;
+    }
+    /* Customize the label (the container) */
+    .container {
+      display: block;
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      font-size: 22px;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    .toggle_radio{
+      position: relative;
+      background: rgb(34, 35, 35);
+      margin: 4px auto;
+      overflow: hidden;
+      padding: 0 !important;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      border: solid 1px #BD1376;
+      border-radius: 0px;
+      position: relative;
+      height: 38px;
+      width: 100%;
+    }
+    .toggle_radio > * { float: left; }
+    .toggle_radio input[type=radio]{ display: none; }
+    .toggle_radio label{
+      font-family: 'Raleway', sans-serif;
+      color: white;
+      font-size: 14px;
+      z-index: 0;
+      display: block;
+      width: 31%;
+      height: 30px;
+      margin: 3px 3px;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      border-radius: 0px;
+      cursor: pointer;
+      z-index: 1;
+      /*background: rgba(0,0,0,.1);*/
+      text-align: center;
+      /*margin: 0 2px;*/
+      /*background: blue;*/ /*make it blue*/
+    }
+    .toggle_option_slider{
+      /*display: none;*/
+      /*background: red;*/
+      width: 32%;
+      height: 30px;
+      background-color: #BD1376;
+      position: absolute;
+      top: 3px;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      border-radius: 0px;
+      -webkit-transition: all .4s ease;
+      -moz-transition: all .4s ease;
+      -o-transition: all .4s ease;
+      -ms-transition: all .4s ease;
+      transition: all .4s ease;
+    }
+    #audience-students:checked ~ .toggle_option_slider{ background: rgba(188, 21, 121,.3); left: 1px; }
+    #audience-professionals:checked ~ .toggle_option_slider{ background: rgba(188, 21, 121,.3); left: 33%; }
+    #audience-both:checked ~ .toggle_option_slider{ background: rgba(188, 21, 121,.3); right: 1px; }
+{% endblock %}
+{% block content %}
+<div class="row no-gutters" style="border-bottom: 1px solid #4C4A4A; background-color: #0da08d; color: white;">
+    <div class="col-12 col-md-4 bookmarked-selection hoverable" id="careers" style="height: 5%; padding: 10px; border-bottom: 1px solid #0a8878; border-right: 1px solid #0a8878; text-decoration: none;">
+        <div class="d-table" style="width: 100%;">
+            <p class="d-table-cell" style="width: 100%; letter-spacing: 4px; text-align: center;">
+                <span style="font-size: 10px;"><span style="font-size: 8px;">BOOKMARKED</span><br>CAREERS</span>
+            </p>
+        </div>
+    </div>
+    <div class="col-12 col-md-4 bookmarked-selection hoverable" id="collections" style="height: 5%; padding: 10px; border-bottom: 1px solid #0a8878; border-right: 1px solid #0a8878; text-decoration: none;">
+        <div class="d-table" style="width: 100%;">
+            <p class="d-table-cell" style="width: 100%; text-align: right; letter-spacing: 4px; text-align: center;">
+                <span style="font-size: 10px;"><span style="font-size: 8px;">BOOKMARKED</span><br>COLLECTIONS</span>
+            </p>
+        </div>
+    </div>
+    <div class="col-12 col-md-4 bookmarked-selection hoverable" id="profiles" style="height: 5%; padding: 10px; border-bottom: 1px solid #0a8878; text-decoration: none;">
+        <div class="d-table" style="width: 100%;">
+            <p class="d-table-cell" style="width: 100%; text-align: right; letter-spacing: 4px; text-align: center;">
+                <span style="font-size: 10px;"><span style="font-size: 8px;">BOOKMARKED</span><br>PROFILES</span>
+            </p>
+        </div>
+    </div>
+</div>
+<div class="row no-gutters">
+    <div class="col bookmarks-area">
+        <div class="row no-gutters" style="height: 20px;"></div>
+        <div class="row no-gutters">
+            <div class="col-12" style="height: 100%; width: 100%; text-align: center; padding-top: 20px;">
+                <p style="font-size: 14px; letter-spacing: 10px; text-transform: uppercase; padding-right: 10px; padding-left: 10px;">Careers</p>
+            </div>
+        </div>
+        {% if skeleton['user']['bookmarks']['careers']|length == 0 %}
+            <div class="row no-gutters" style="margin-top: 25px; padding-bottom: 20px;">
+                <div class="col d-table" style="text-align: center; letter-spacing: 2px;">
+                    <p class="d-table-cell">You haven't bookmarked any careers yet.</p>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row no-gutters" style="padding-bottom: 20px;">
+            {% for bookmark in careers %}
+                <div class="col-12 col-md-6" style="padding: 5px;">
+                    <div class="row no-gutters" style="padding: 20px; padding-bottom: 0;">
+                        <div class="col" style="border: 1px dotted #058879;">
+                            <div class="row no-gutters" style="padding: 10px;">
+                                <div class="col">
+                                   <div class="d-table coll-title" style="width: 100%; height: 100%;">
+                                       <a href="{{url_for('career.career_page', career_id=bookmark['career_id'])}}" class="d-table-cell" style="font-size: 16px; text-align: center; vertical-align: middle; letter-spacing: 2px; text-transform: capitalize;">{{ bookmark['title'] }}</a>
+                                        <img src='/static/images/star_icon.png' class="bookmark-add hoverable" id="career-{{bookmark['career_id']}}" style="position: absolute; right: 20px; height: 17px; {%if bookmark['career_id'] in skeleton['user']['bookmarks']['careers']%}display: none;{%endif%}">
+                                        <img src='/static/images/star_pink_icon.png' class="bookmark-remove hoverable" id="career-{{bookmark['career_id']}}" style="position: absolute; right: 20px; height: 17px; {%if not bookmark['career_id'] in skeleton['user']['bookmarks']['careers']%}display: none;{%endif%}">
+                                    </div>
+                                </div>
+                           </div>
+                            <div class="row no-gutters">
+                                <div class="col" style="width: 100%; padding: 20px; padding-top: 0;">
+                                    <iframe width="100%" height="200px;" src="{{bookmark['videos']}}"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row no-gutters" style="margin-top: 20px; padding: 5px;">
+            <div class="col-12" style="text-align: center; border-top: 1px solid #dadada; padding-top: 20px;">
+                <p style="font-size: 14px; letter-spacing: 10px; text-transform: uppercase; padding-right: 10px; padding-left: 10px;">collections</p>
+            </div>
+        </div>
+        {% if skeleton['user']['bookmarks']['collections']|length == 0 %}
+            <div class="row no-gutters" style="margin-top: 25px; padding-bottom: 20px;">
+                <div class="col d-table" style="text-align: center; letter-spacing: 2px;">
+                    <p class="d-table-cell">You haven't bookmarked any collections yet.</p>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row no-gutters" style="padding-left: 3%; padding-right: 3%;">
+            {% for bookmark in collections %}
+                <div class="col-12 col-md-6" style="padding: 5px;">
+                    <div class="row no-gutters" style="padding: 20px;">
+                        <div class="col" style="border: 1px dotted #058879;">
+                            <div class="row no-gutters">
+                                <div class="col" style="text-align: right; padding: 10px;">
+                                    <img src='/static/images/star_icon.png' class="bookmark-add hoverable" id="collection-{{bookmark['url']}}" style="height: 17px; {%if bookmark['url'] in skeleton['user']['bookmarks']['collections']%}display: none;{%endif%}">
+                                    <img src='/static/images/star_pink_icon.png' class="bookmark-remove hoverable" id="collection-{{bookmark['url']}}" style="height: 17px; {%if not bookmark['url'] in skeleton['user']['bookmarks']['collections']%}display: none;{%endif%}">
+                                </div>
+                            </div>
+                            <div class="row no-gutters">
+                                <a href="/article/{{ bookmark['url'] }}" class="col" style="padding: 20px; text-decoration: none;">
+                                    <div class="row no-gutters">
+                                        <div class="col">
+                                            <img src="{{ bookmark['image'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 100%; height: 200px; object-fit: cover;">
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters">
+                                        <div class="col d-table" style="text-align: center; font-size: 14px; letter-spacing: 1px; padding-top: 10px;">
+                                            <p class="d-table-cell">{{ bookmark['title'] }}</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row no-gutters" style="margin-top: 20px; padding: 5px;">
+            <div class="col-12" style="text-align: center; border-top: 1px solid #dadada; padding-top: 20px;">
+                <p style="font-size: 14px; letter-spacing: 10px; text-transform: uppercase; padding-right: 10px; padding-left: 10px;">Profiles</p>
+            </div>
+        </div>
+        {% if skeleton['user']['bookmarks']['profiles']|length == 0 %}
+            <div class="row no-gutters" style="margin-top: 25px; padding-bottom: 20px;">
+                <div class="col d-table" style="text-align: center; letter-spacing: 2px;">
+                    <p class="d-table-cell">It looks like you haven't bookmarked any profiles yet.</p>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row no-gutters" style="padding-left: 3%; padding-right: 3%;">
+            {% for bookmark in profiles %}
+                <a href="{{ url_for('profile.user_profile', username=skeleton['user']['profile']['username']) }}" class="col-12 col-md-6" style="text-decoration: none; text-transform: capitalize; padding: 10px;">
+                    <div class="row no-gutters" style="padding: 2%; background-color: #272727; border: solid 1px #00A08E; border-radius: 3px;">
+                        <div class="col">
+                            <img src="{{ skeleton['user']['profile']['profile_image']['src'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 150px; height: 150px; object-fit: cover; position: relative; border-radius: 50%; border: solid 5px #f1f1f1;">
+                        </div>
+                        <div class="col thick-text" style="font-size: 10px; letter-spacing: 2px;">
+                            {% if skeleton['user_type'] == 'user' %}
+                                <div class="row no-gutters">
+                                    <div class="col" style="text-align: right; padding: 10px;">
+                                        <img src='/static/images/star_icon.png' class="stop-prop bookmark-add hoverable" id="profile-{{skeleton['user']['user_id']}}" style="height: 17px; {%if skeleton['user']['user_id'] in skeleton['user']['bookmarks']['profiles']%}display: none;{%endif%}" onclick="event.preventDefault()">
+                                        <img src='/static/images/star_pink_icon.png' class="stop-prop bookmark-remove hoverable" id="profile-{{skeleton['user']['user_id']}}" style="height: 17px; {%if not skeleton['user']['user_id'] in skeleton['user']['bookmarks']['profiles']%}display: none;{%endif%}" onclick="event.preventDefault()">
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <p style="font-size: 14px;">{{ skeleton['user']['profile']['name'] }}</p>
+                            {% for career in skeleton['user']['profile']['careers'] %}
+                                <p>#{{ career }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        {% endblock %}
+    </div>
+</div>

@@ -1,0 +1,106 @@
+{% extends skeleton['template'] %}
+{% block title %}Ambikor - {{ content['title'] }}{% endblock %}
+{% block meta %}
+<meta property="og:title" content="{{ content['title'] }}" /> 
+<meta property="og:description" content="{{ content['text'] }}" />
+<meta property="og:image" content="{{ content['image'] }}" />
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{ content['image'] }}">
+<meta name="twitter:site" content="@ambikor">
+<meta name="twitter:creator" content="@LamarElimbo">
+<meta name="twitter:title" content="{{ content['title'] }}">
+<meta name="twitter:description" content="{{ content['text'] }}">
+{% endblock %}
+{% block content %}
+ <div class="row no-gutters" id="home-body" style="margin-top: 10px;">
+    <div class="col">
+        <div class="row">
+            <div class="col-10" style="padding-left: 3%;">
+                <div class="addthis_inline_share_toolbox" data-title="{{ content['title'] }}" data-description="{{ content['text'] }}" data-media="{{ content['image'] }}"></div>
+            </div>
+            {% if skeleton['user_type'] == "user" %}
+                <div class="col-2" style="text-align: right; padding-right: 50px; padding-top: 10px;">
+                    <img src='/static/images/star_icon.png' class="bookmark-add hoverable" id="collection-{{content['url']}}" style="height: 25px; {%if content['url'] in skeleton['user']['bookmarks']['collections']%}display: none;{%endif%}">
+                    <img src='/static/images/star_pink_icon.png' class="bookmark-remove hoverable" id="collection-{{content['url']}}" style="height: 25px; {%if not content['url'] in skeleton['user']['bookmarks']['collections']%}display: none;{%endif%}">
+                </div>
+            {% endif %}
+        </div>
+        <div class="row no-gutters">
+            <div class="col-12 col-md-6" style="padding: 15px; margin-top: 15px; height: 300px;">
+                <img src="{{ content['image'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 100%; height: 270px; object-fit: cover;">
+            </div>
+            <div class="col-12 col-md-6" style="padding: 15px; letter-spacing: 2px; text-align: center;">
+                <div class="row no-gutters">
+                    <div class="col d-table" style="width: 100%; padding: 5px; margin-bottom: 15px;">
+                        <p class="d-table-cell" style="font-size: 30px;">{{ content['title'] }}</p>
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col d-table" style="width: 100%; padding: 5px;">
+                        <p class="d-table-cell" style="font-size: 16px; line-height: 1.7;">{{ content['text'] }}</p>
+                    </div>
+                </div>
+            </div>
+         </div>
+        {% if has_notes == 'true' %}
+            {% if content['careers'] | length > 0 %}
+                <div class="row no-gutters" style="height: 50px; margin-top: 50px; border-top: dashed 1px #4C4A4A;"></div>
+                {% block career_panels %}{% endblock %}
+            {% endif %}
+        {% else %}
+            <div class="row no-gutters" style="height: 100%; border-top: dashed 1px #4C4A4A;">
+               <div class="col-12" id="careers-spot">
+                    <div class="row no-gutters total-row" style="padding: 20px;">
+                        <div class="col">
+                            <p style="font-size: 14px; text-align: center; letter-spacing: 2px; color: black;">Total Careers: {{ content['careers'] | length }}</p>
+                        </div>
+                    </div>
+                   <div class="row no-gutters">
+                       {% for career in content['careers'] %}
+                            <div class="col-12 col-xl-6">
+                               <a href="{{ url_for('career.career_page', career_id=career['career_id'])}}" class="row no-gutters" id="{{career['career_id']}}" style="min-height: 70px; margin: 10px; padding: 5px; text-decoration: none; white-space: nowrap; {% if skeleton['user_type'] == 'admin' %}{% if career['users'] is defined and career['users']|length > 0 %} border: solid 1px #0da08d; background-color: #0da08d1c;{% else %}border: solid 1px #b2196a; background-color: #c663a32e;{% endif %}{% else %}border: solid 1px #1C1B1B;{% endif %}">
+                                   <div class="col-4 col-md-2" style="padding-right: 10px; padding-left: 10px; margin-top: 5px; margin-bottom: 5px;">
+                                       <img src="{{ career['image'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 100%; height: 100%; max-height: 100px; object-fit: cover;">
+                                   </div>
+                                   <div class="col-8 col-md-10" style="padding-right: 10px; padding-left: 10px;">
+                                       <div class="row no-gutters">
+                                           <div class="col-12 col-md-5" style="padding-right: 10px; padding-left: 10px; margin-bottom: 5px; white-space: normal;">
+                                               <div class="d-table" style="width: 100%; height: 100%;">
+                                                   <p class="d-table-cell" style="font-size: 14px; vertical-align: middle; letter-spacing: 2px; color: black; text-transform: capitalize;">{{ career['title'] }}</p>
+                                               </div>
+                                           </div>
+                                           <div class="col-12 col-md-7" style="padding-right: 10px; padding-left: 10px;">
+                                               <div class="row" style="padding-top: 10px">
+                                                    {% for career_tag in career['tags'] %}
+                                                        <div class="col-4 hoverable industry-type-selection" id="{{ career_tag }}">
+                                                            <div class="row" style="margin-bottom: 5px;">
+                                                                <div class="col-12">
+                                                                    <img src="{{ skeleton['tag_icons']['icons'][career_tag] }}" style="height: 40px; display: block; margin-left: auto; margin-right: auto;">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <p style="text-align: center; font-size: 10px; text-transform: capitalize; letter-spacing: 1px; color: black;">{{ career_tag }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </a>
+                            </div>
+                       {% endfor %}
+                       <div class="row no-gutters" style="height: 15px;"></div>
+                   </div>
+               </div>
+            </div>
+        {% endif %}
+        {% block endscript %}
+            <!-- Go to www.addthis.com/dashboard to customize your tools -->
+            <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5bd88fdd7f5cb6bf"></script>
+        {% endblock %}
+     </div>
+</div>
+{% endblock %}

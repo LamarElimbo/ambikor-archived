@@ -1,0 +1,374 @@
+{% extends skeleton['template'] %}
+{% block title %}Ambikor - {{career['title']}}{% endblock %}
+{% block startscript2 %}
+    $(document).on({
+        click: function (){
+            $(this).hide();
+            if($(this).find(".action").attr('id') == "bookmark"){ $(this).parent().find("#unmark-career").show(); } else { $(this).parent().find("#bookmark-career").show(); }
+            $.post("{{ url_for('career.bookmark_career') }}", { "action": $(this).find(".action").attr('id'), "career_id": $(this).parent().attr("id") });
+        }
+    }, ".bookmark-career");
+
+    $(document).on({ 
+        click: function (){ 
+            $(".invite-service").val($(this).attr("id")); 
+            $(".invite-form").show(); 
+            $(".invite-form-service-title").text($(this).attr("id"));
+            $(".invite-form-service-user-description").text($(this).parent().parent().find('.service-user-description').attr('id'));
+        } 
+    }, ".show-service-invite-form");
+
+    $(document).on({ click: function (){ $(".invite-form").hide(); } }, ".collapse-invite-form");
+    $(document).on({ click: function (){ $(".invite-services-area").show();} }, ".show-invite-services");
+    $(document).on({ click: function (){ $(".invite-services-area").hide();} }, ".collapse-invite-services-area");
+
+    $(document).on({
+        click: function (){
+            $(".invite-social").css({"border": "none", "background-color": "#07a08d"});
+            $(this).css({"border": "2px solid #bc1579", "background-color": "#017366"});
+            $(".invite-social").removeClass("selected-social");
+            $(this).addClass("selected-social");
+            $(".selected-social-icon").hide();
+            if($(this).attr('id') == 'twitter'){ $("#icon-twitter").show();}
+            else if($(this).attr('id') == 'facebook'){ $("#icon-facebook").show();}
+            else if($(this).attr('id') == 'facebook'){ $("#icon-instagram").show();}
+            else if($(this).attr('id') == 'email'){ $("#icon-email").show();}
+
+        }
+    }, ".invite-social");
+
+    $(document).on({
+        click: function (){
+            $.ajax({
+                url: "/invite",
+                type: "post",
+                data: {
+                    requester: $(this).attr('id'),
+                    service: $(this).parent().parent().parent().find(".invite-service").val(),
+                    social: $(this).parent().parent().parent().find(".selected-social").attr("id"),
+                    username: $(this).parent().parent().parent().find(".username").val(),
+                    cost: $(this).parent().parent().parent().find(".cost").val(),
+                    message: $(this).parent().parent().parent().find(".message").val()
+                },
+             });
+            $('#expand-service-area').hide();
+            $('#service-invite-sent').show();
+        }
+    }, ".send-invite");
+{% endblock %}
+{% block style2 %}
+.invite-form { width: 100%; }
+@media (min-width: 768px) {
+    .invite-form { width: calc(100% - 250px); }
+    #wrapper.toggled .invite-form { margin-right: 0; width: 100%; }
+}
+{% endblock %}
+{% block content %}
+<div class="row no-gutters" id="{{ career['career_id'] }}" style="padding-top: 30px;">
+    <div class="col-10">
+        <p style="padding-left: 20px; font-size: 24px; letter-spacing: 2px; text-transform: capitalize;">{{career['title']}}</p>
+    </div>
+    {% if skeleton['user_type'] == 'user' %}
+        <div class="col-2" style="text-align: right; padding-right: 50px;">
+            <img src='/static/images/star_icon.png' class="bookmark-add hoverable" id="career-{{career['career_id']}}" style="height: 25px; {%if career['career_id'] in skeleton['user']['bookmarks']['careers']%}display: none;{%endif%}">
+            <img src='/static/images/star_pink_icon.png' class="bookmark-remove hoverable" id="career-{{career['career_id']}}" style="height: 25px; {%if not career['career_id'] in skeleton['user']['bookmarks']['careers']%}display: none;{%endif%}">
+        </div>
+    {% endif %}
+ </div>
+{% if career['alternative_titles'] is defined %}
+    <div class="row no-gutters">
+        <div class="col-12">
+            <p style="padding-left: 20px; font-size: 14px; letter-spacing: 2px; text-transform: capitalize;">{% for career in career['alternative_titles'] %}{{ career }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
+        </div>
+     </div>
+{% endif %}
+ <div class="row no-gutters" style="padding: 20px;">
+    <div class="col-12 col-md-4" style="padding-right: 10px;">
+        <img src="{{ career['image'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="width: 100%; object-fit: cover;">
+     </div>
+     <div class="col-12 col-md-8">
+         <div class="row no-gutters">
+             <div class="col-12">
+                 <p id="description" style="padding: 7px; font-size: 14px; letter-spacing: 2px;">{{career['description']}}</p>
+             </div>
+        </div>
+         <div class="row no-gutters">
+           {% for career_tag in career['tags'] %}
+                <a href="/careers/{{ career_tag }}" class="col-2" style="text-decoration: none;">
+                    <div class="row" style="margin-bottom: 5px;">
+                        <div class="col-12">
+                            <img src="{{ skeleton['tag_icons']['icons'][career_tag] }}" style="height: 40px; display: block; margin-left: auto; margin-right: auto;">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 d-table" style="width: 100%">
+                            <div class="d-table-cell" style="width: 100%">
+                                <p style="color: black; text-align: center; font-size: 10px; text-transform: capitalize; letter-spacing: 2px;">{{ career_tag }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+         </div>
+     </div>
+</div>
+<div class="row no-gutters">
+    <div class="col-12 col-md-6" style="width: 100%; padding: 20px;"><iframe width="100%" height="200px;" src="{{career['videos'][0]}}"></iframe></div>
+    <div class="col-12 col-md-6" style="width: 100%; padding: 20px;"><iframe width="100%" height="200px;" src="{{career['videos'][1]}}"></iframe></div>
+</div>
+ {% if users |length > 0 %}
+    <div class="row no-gutters" style="margin: 20px; padding: 5px;">
+        <div class="col-4">
+            <div class="row" style="height: 10px; border-bottom: dashed 1px #4C4A4A;"></div>
+        </div>
+        <div class="col-4" style="text-align: center; background-color: #f1f1f1; padding-right: 20px; padding-left: 20px;">
+            <p style="font-size: 14px; letter-spacing: 10px; text-transform: uppercase;">Users</p>
+        </div>
+        <div class="col-4">
+            <div class="row" style="height: 10px; border-bottom: dashed 1px #4C4A4A;"></div>
+        </div>
+    </div>
+    <div class="row no-gutters">
+        <div class="col-12">
+            <div class="row no-gutters total-row" style="padding: 20px;">
+                {% for user in users %}
+                    <a href="{{ url_for('profile.user_profile', username=user['profile']['username']) }}" class="col-12 col-md-6" style="text-decoration: none; text-transform: capitalize; padding: 10px;">
+                        <div class="row no-gutters" style="padding: 10px; background-color: #07a08d; color: white; border: solid 1px black; border-radius: 3px;">
+                            <div class="col-12">
+                                <img src="{{ user['profile']['profile_image']['src'] }}" onerror="this.onerror=null;this.src='../../../static/images/broken_img.png';" style="float: left; width: 120px; height: 120px; margin-right: 10px; object-fit: cover; border-radius: 50%; border: solid 3px #f1f1f1;">
+                                <div class="row no-gutters">
+                                    <div class="col-12" style="font-size: 10px; letter-spacing: 2px;">
+                                        {% if skeleton['user_type'] == 'user' %}
+                                            <div class="row no-gutters">
+                                                <div class="col" style="text-align: right;">
+                                                    <img src='/static/images/star_icon.png' class="stop-prop bookmark-add hoverable" id="profile-{{user['user_id']}}" style="height: 17px; {%if user['user_id'] in skeleton['user']['bookmarks']['profiles']%}display: none;{%endif%}" onclick="event.preventDefault()">
+                                                    <img src='/static/images/star_pink_icon.png' class="stop-prop bookmark-remove hoverable" id="profile-{{user['user_id']}}" style="height: 17px; {%if not user['user_id'] in skeleton['user']['bookmarks']['profiles']%}display: none;{%endif%}" onclick="event.preventDefault()">
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <p style="font-size: 16px;">{{ user['profile']['name'] }}</p>
+                                        {% for career in user['profile']['careers'] %}
+                                            <span style="margin-right: 10px; font-size: 12px;">#{{ career }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+     </div>
+ {% endif %}
+ <div class="row no-gutters hoverable show-invite-services">
+     <div class="col-12 d-table" style="background-color: #00A08E; padding: 30px;">
+         <p class="d-table-cell" style="font-size: 14px; color: white; text-align: center; letter-spacing: 2px;">Request a service from a professional not yet on Ambikor</p>
+     </div>
+ </div>
+ <div class="row no-gutters invite-services-area" style="text-align: right;">
+    <div class="col-12" style="padding: 20px;">
+        <img src='/static/images/close_icon.png' class="collapse-invite-services-area hoverable" style="width: 20px;">
+    </div>
+</div>
+<div class="row no-gutters invite-services-area">
+    {% set suggestions = career['services']['suggestions'] + admin['services']['suggestions_basic'] %}
+    {% for service in suggestions %}
+        <div class="col-12 col-md-6 col-lg-4 service-listing" style="height: 250px; padding: 10px;">
+            <div class="row no-gutters service-listing" style="height: 230px; width: 100%; border: 1px solid #00A08E; border-radius: 5px; margin-bottom: 10px; padding: 15px; overflow: hidden;">
+                <div class="col-12" style="text-align: center;">
+                    <div class="row no-gutters" style="padding-bottom: 10px;">
+                        <div class="col-12" style="font-size: 24px; letter-spacing: 2px;">
+                            <b class="service-title" id="{{ service['title'] }}">{{ service['title'] }}</b>
+                        </div>
+                    </div>
+                    <div class="row no-gutters" style="height: 110px; padding-bottom: 10px;">
+                        <div class="col-12 service-expert-description" id="{{ service['expert_description'] }}" style="font-size: 14px; overflow: hidden;">
+                            <p class="service-user-description" id="{{ service['user_description'] }}">{{ service['user_description'] }}</p>
+                        </div>
+                    </div>
+                    {% if skeleton['user_type'] == 'user' %}
+                        <div class="row no-gutters" style="position: absolute; bottom: 0; width: 100%; padding: 20px; padding-bottom: 0px; background-color: #f1f1f1;">
+                            <div class="col-12 d-table show-service-invite-form hoverable" id="{{ service['title'] }}" style="height: 30px; font-size: 11px; text-align: center; border-radius: 50px; letter-spacing: 2px;">
+                                <p class="d-table-cell" style="vertical-align: middle; text-transform: uppercase;">EXPAND</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="row no-gutters" style="position: absolute; bottom: 0; width: 100%; padding: 20px; padding-bottom: 0px;">
+                            <a href="{{ url_for('home.home_page') }}" class="col-12 d-table hoverable" id="{{ service['title'] }}" style="height: 30px; font-size: 11px; text-align: center; color: white; background-color: #00A08E; border-radius: 50px; letter-spacing: 2px;">
+                                <p class="d-table-cell" style="vertical-align: middle; text-transform: uppercase;">SIGN IN</p>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<div class="row no-gutters invite-form" style="position: fixed; top: 0; height: 100%; background-color: #f1f1f1; z-index: 10; opacity: 0.95; display: none;"></div>
+<div class="row no-gutters invite-form" style="position: fixed; top: 0; height: 100%; z-index: 100; display: none;">
+    <div class="col-12" id="service-invite-sent" style="padding: 20px; position: absolute; top: 0; display: none;">
+        <div class="row" style="position: absolute; top: 20vh; width: 100%;">
+            <div class="col-2"></div>
+            <div class="col-8" style="background-color: #014a40; height: 100%; width: 100%; border: 5px solid #cdcdcd; border-radius: 5px; text-align: center; padding: 10px; box-shadow: 5px 5px 15px black;">
+                <div style="width: 100%; text-align: right;"><img src="../../static/images/close_icon.png" class="hoverable collapse-invite-form" style="width: 20px;"></div>
+                <img src="../../static/images/grey_check_icon.png" style="width: 70px;">
+                <div class="d-table thick text" style="width: 100%; font-size: 20px; letter-spacing: 1px; padding: 30px;">
+                    <p class="d-table-cell" style="vertical-align: middle; color: white;">Invitation Sent</p>
+                </div>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+</div>
+<div class="row no-gutters invite-form" id="expand-service-area" style="position: fixed; top: 0; height: 100%; z-index: 100; display: none;">
+    <div class="col-12" style="padding: 20px; position: absolute; top: 0;">
+         <div class="row no-gutters" style="position: absolute; top: 10vh; height: 90vh; width: 100%;">
+             <div class="col-1"></div>
+             <div class="col-10" style="background-color: #00A08E; padding: 10px; height: 90%; width: 100%; box-shadow: 15px 18px 20px black; overflow: scroll;">
+                 <div class="row no-gutters" style="text-align: right; margin-bottom: 20px;">
+                    <div class="col">
+                        <img src='/static/images/close_icon.png' class="collapse-invite-form hoverable" style="width: 20px;">
+                    </div>
+                </div>
+                  <div class="row no-gutters" style="margin-bottom: 20px;">
+                    <div class="col-12 d-table">
+                        <p class="d-table-cell" style="vertical-align: middle; font-size: 16px; color: white; text-align: center; letter-spacing: 2px;">Invitation Form</p>
+                      </div>
+                 </div>
+                 <div class="row no-gutters service" style="width: 100%; padding: 10px; border-bottom: dotted 1px #013f38; margin-bottom: 30px;">
+                    <div class="col-12 col-md-6" style="padding: 10px;">
+                        <div class="row no-gutters" style="width: 100%; margin-bottom: 10px;">
+                            <div class="col" style="padding: 10px; border: 1px dotted #013f38;">
+                                <div class="row no-gutters" style="width: 100%; margin-bottom: 10px;">
+                                    <div class="col">
+                                        <div class="d-table" style="width: 100%; height: 100%; font-size: 14px; letter-spacing: 1px;">
+                                            <b class="d-table-cell invite-form-service-title" style="vertical-align: middle; text-align: center;"></b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="width: 100%;">
+                                    <div class="col-12">
+                                        <div class="d-table" style="width: 100%; height: 100%; font-size: 12px; letter-spacing: 1px;">
+                                            <p class="d-table-cell invite-form-service-user-description" style="vertical-align: middle; text-align: center;"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6" style="padding: 10px;">
+                        <div class="row no-gutters" style="margin-bottom: 10px;">
+                            <div class="col-12 d-table">
+                                <p class="d-table-cell" style="padding-left: 15px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px; text-align: center;">1) What are you willing to pay for this service?</p>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <p style="font-size: 20px; color: #636060; position: relative; z-index: 10; left: 30px; top: 7px;">$</p>
+                            <div class="col d-table" style="padding-left: 10px; padding-right: 10px;">
+                                <input class="input-field cost" type="number" placeholder="20.00" style="width: 100%; height: 40px; font-size: 20px; padding-left: 25px;">
+                            </div>
+                        </div>
+                     </div>
+                </div>
+                  <div class="row no-gutters" style="margin-bottom: 20px;">
+                    <div class="col-12 d-table">
+                        <p class="d-table-cell" style="vertical-align: middle; font-size: 16px; color: white; text-align: center; letter-spacing: 2px;">Who would you like to invite for this service?</p>
+                      </div>
+                 </div>
+                <div class="row no-gutters" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: dotted 1px #013f38;">
+                    <div class="col-12 col-md-6" style="padding: 10px;">
+                        <div class="row no-gutters" style="margin-bottom: 10px;">
+                            <div class="col-12 d-table">
+                                <p class="d-table-cell" style="padding-left: 15px; letter-spacing: 2px; font-size: 14px;">2) Select one of their social media platforms</p>
+                            </div>
+                        </div>
+                        <div class="row no-gutters hoverable invite-social" id="twitter" style="padding: 5px;">
+                            <div class="col-3" style="text-align: center;">
+                                <img src="../../static/images/twitter.png" style="width: 30px; border-radius: 50%;">
+                            </div>
+                            <div class="col-9 d-table">
+                                <div class="d-table-cell" style="letter-spacing: 1px;">Twitter</div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters hoverable invite-social" id="facebook" style="padding: 5px;">
+                            <div class="col-3" style="text-align: center;">
+                                <img src="../../static/images/facebook.png" style="width: 30px; border-radius: 50%;">
+                            </div>
+                            <div class="col-9 d-table">
+                                <div class="d-table-cell" style="letter-spacing: 1px;">Facebook</div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters hoverable invite-social" id="instagram" style="padding: 5px;">
+                            <div class="col-3" style="text-align: center;">
+                                <img src="../../static/images/instagram.png" style="width: 30px; border-radius: 50%;">
+                            </div>
+                            <div class="col-9 d-table">
+                                <div class="d-table-cell" style="letter-spacing: 1px;">Instagram</div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters hoverable invite-social" id="mail" style="padding: 5px;">
+                            <div class="col-3" style="text-align: center;">
+                                <img src="../../static/images/mail_icon.png" style="width: 30px; border-radius: 50%;">
+                            </div>
+                            <div class="col-9 d-table">
+                                <div class="d-table-cell" style="letter-spacing: 1px;">Email</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6" style="height: 200px; padding: 10px;">
+                        <div class="row no-gutters" style="height: 200px; border: 1px dotted #013f38; padding: 10px;">
+                            <div class="col-12" style="text-align: center;">
+                                <div class="row no-gutters">
+                                    <div class="col-12" style="text-align: center; padding: 10px;">
+                                        <img class="selected-social-icon" id="icon-twitter" src="../../static/images/twitter.png" style="width: 50px; border-radius: 50%; display: none;">
+                                        <img class="selected-social-icon" id="icon-facebook" src="../../static/images/facebook.png" style="width: 50px; border-radius: 50%; display: none;">
+                                        <img class="selected-social-icon" id="icon-instagram" src="../../static/images/instagram.png" style="width: 50px; border-radius: 50%; display: none;">
+                                        <img class="selected-social-icon" id="icon-email" src="../../static/images/mail_icon.png" style="width: 50px; border-radius: 50%; display: none;">
+                                    </div>
+                                </div>
+                                <div class="row no-gutters" style="margin-top: 10px;">
+                                    <div class="col-12">
+                                        <div class="row no-gutters" style="margin-bottom: 10px;">
+                                            <div class="col-12 d-table">
+                                                <p class="d-table-cell" style="padding-left: 15px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px;">3) Enter their username/email</p>
+                                            </div>
+                                        </div>
+                                        <div class="row no-gutters">
+                                            <div class="col-12 d-table" style="padding-left: 10px; padding-right: 10px;">
+                                                <input class="input-field username" type="text" style="width: 100%; height: 40px;">
+                                                <input class="invite-service" type="text" style="display: none;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-gutters" style="margin-bottom: 20px;">
+                    <div class="col-12">
+                        <div class="row no-gutters" style="margin-bottom: 10px;">
+                            <div class="col-12 d-table">
+                                <p class="d-table-cell" style="padding-left: 15px; vertical-align: middle; margin-right: 10px; letter-spacing: 2px; font-size: 14px;">4) Attach a message describing what you're looking for</p>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col-12 d-table" style="padding-left: 10px; padding-right: 10px;">
+                                <textarea class="input-field message" style="width: 100%; height: 100px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-gutters" style="padding-right: 15px; padding-left: 15px;">
+                    <div class="col-2"></div>
+                    <div class="col-8 d-table">
+                        <div class="d-table-cell send-invite hoverable" id="{{ skeleton['user']['user_id'] }}" style="height: 50px; border-radius: 5px; background-color: #BD1376; font-size: 12px; letter-spacing: 2px; text-align: center; vertical-align: middle;">INVITE</div>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+             </div>
+             <div class="col-1"></div>
+         </div>
+     </div>
+ </div>
+{% endblock %}

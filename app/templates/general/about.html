@@ -1,0 +1,104 @@
+{% extends skeleton['template'] %}
+{% block title %}Ambikor | Become a Career Guide{% endblock %}
+{% block content %}
+<div class="row no-gutters" style="background-color: #cecece;">
+    <div class="col-12 d-table" style="padding: 50px;">
+        <p class="d-table-cell" style="width: 100%; font-size: 32px; text-align: center; letter-spacing: 3px; line-height: 1.5;">There's an opportunity gap in your online education<br>Ambikor is on a mission to fill it.</p>
+    </div>
+</div>
+<div class="row no-gutters" style="padding: 40px; text-align: center; letter-spacing: 1px;">
+    <div class="col-12">
+        <div class="row no-gutters" style="font-size: 26px; letter-spacing: 2px; padding: 10px;">
+            <div class="col-12">
+                <p>Ambikor makes it easy to find guidance and mentorship services from experts spanning across every career imaginable.</p>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col d-table" style="padding: 70px; padding-top: 0; padding-bottom: 30px;">
+                <p class="d-table-cell" style="width: 100%; font-size: 16px; line-height: 2;">Determined learners like you are increasingly relying on online education and Ambikor gives you access to some of the major benefits that are usually reserved for post-secondary students.</p>
+            </div>
+        </div>
+        <div class="row no-gutters" style="padding-bottom: 50px;">
+            <div class="col-12 col-sm-4" style="padding: 15px;">
+                <div class="row no-gutters" style="border: solid 1px #3c3a3a; border-radius: 5px;">
+                    <div class="col-12">
+                        <div class="row no-gutters" style='padding-top: 30px;'>
+                            <div class="col-12" style="height: 70px;"><img src='../../../static/images/cat_commerce.png' style="height: 70px;"></div>
+                        </div>
+                        <div class="row no-gutters" style="margin-top: 10px; padding: 30px;">
+                            <div class="col-12 d-table">
+                                <p class="d-table-cell" style="font-size: 16px; letter-spacing: 2px;">Feedback<br>on your work</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-4" style="padding: 15px;">
+                <div class="row no-gutters" style="border: solid 1px #3c3a3a; border-radius: 5px;">
+                    <div class="col-12">
+                        <div class="row no-gutters" style='padding-top: 30px;'>
+                            <div class="col-12" style="height: 70px;"><img src='../../../static/images/cat_community.png' style="height: 70px;"></div>
+                        </div>
+                        <div class="row no-gutters" style="margin-top: 10px; padding: 30px;">
+                            <div class="col-12 d-table">
+                                <p class="d-table-cell" style="font-size: 16px; letter-spacing: 2px;">Professional<br>opportunities</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-4" style="padding: 15px;">
+                <div class="row no-gutters" style="border: solid 1px #3c3a3a; border-radius: 5px;">
+                    <div class="col-12">
+                        <div class="row no-gutters" style='padding-top: 30px;'>
+                            <div class="col-12" style="height: 70px;"><img src='../../../static/images/cat_social_good.png' style="height: 70px;"></div>
+                        </div>
+                        <div class="row no-gutters" style="margin-top: 10px; padding: 30px;">
+                            <div class="col-12 d-table">
+                                <p class="d-table-cell" style="font-size: 16px; letter-spacing: 2px;">One-on-ones<br>with experts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% if skeleton['user_type'] == 'non-user' %}
+    <div class="row no-gutters" style="padding: 40px; text-align: center; letter-spacing: 1px; border-top: solid 1px #3c3a3a;">
+        <div class="col-12" style="border-radius: 3px;">
+            <div class="row no-gutters" style="font-size: 26px; letter-spacing: 2px; padding: 10px;">
+                <div class="col-12">
+                    <p>Start Benefiting from Ambikor Today</p>
+                </div>
+            </div>
+            <form action="{{ url_for('auth.user_create_account') }}" method='post' class="row no-gutters">
+                <div class="col-1 col-md-2"></div>
+                <div class="col-10 col-md-8" style="padding-left: 20px; padding-right: 20px;">
+                    <div class="row no-gutters" style="margin-bottom: 15px;">
+                        <div class="col-12">
+                            {{ skeleton.registration_form.username(style="width: 100%; height: 50px; font-size: 12px; background-color: #f1f1f1; border: 1px solid #BD1376; border-radius: 5px; padding-left: 10px;", placeholder="Username") }}
+                        </div>
+                    </div>
+                    <div class="row no-gutters" style="margin-bottom: 15px;">
+                        <div class="col-12">
+                            {{ skeleton.registration_form.email(style="width: 100%; height: 50px; font-size: 12px; background-color: #f1f1f1; border: 1px solid #BD1376; border-radius: 5px; padding-left: 10px;", placeholder="Email") }}
+                        </div>
+                    </div>
+                    <div class="row no-gutters" style="margin-bottom: 20px;">
+                        <div class="col-12">
+                            {{ skeleton.registration_form.password(style="width: 100%; height: 50px; font-size: 12px; background-color: #f1f1f1; border: 1px solid #BD1376; border-radius: 5px; padding-left: 10px;", placeholder="Password (5 - 20 characters)") }}
+                        </div>
+                    </div>
+                    <div class="row no-gutters" style="margin-bottom: 15px;">
+                        <div class="col-12">
+                            {{ skeleton.registration_form.submit(class="hoverable", style="width: 100%; height: 60px; background-color: #BD1376; text-align: center; font-size: 14px; color: white; border: none; border-radius: 3px; box-shadow: 1px 5px 6px black; letter-spacing: 2px;", value="CREATE YOUR FREE ACCOUNT") }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-1 col-md-2"></div>
+            </form>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
